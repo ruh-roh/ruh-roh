@@ -21,13 +21,13 @@ namespace RuhRoh.Core.Tests
         }
 
         [Fact]
-        public void Slow_Should_Slow_Down_A_Method_Call()
+        public void SlowItDownBy_Should_Slow_Down_A_Method_Call()
         {
             // Arrange
             var affectedService = ChaosEngine.Affect<DummyService>();
             affectedService
-                .When(x => x.RetrieveData())
-                .SlowDown(TimeSpan.FromMinutes(5));
+                .WhenCalling(x => x.RetrieveData())
+                .SlowItDownBy(TimeSpan.FromMinutes(5));
 
             var service = affectedService.Instance;
             var result = 0;

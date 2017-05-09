@@ -24,7 +24,7 @@ namespace RuhRoh.Core.Tests
         {
             var affectedMethod = GetAffectedMethod();
 
-            affectedMethod.SlowDown(TimeSpan.FromSeconds(seconds));
+            affectedMethod.SlowItDownBy(TimeSpan.FromSeconds(seconds));
 
             Assert.Equal(affectedMethod.Affectors.Count, 0);
         }
@@ -38,7 +38,7 @@ namespace RuhRoh.Core.Tests
         {
             var affectedMethod = GetAffectedMethod();
 
-            affectedMethod.SlowDown(TimeSpan.FromSeconds(seconds));
+            affectedMethod.SlowItDownBy(TimeSpan.FromSeconds(seconds));
 
             Assert.Equal(affectedMethod.Affectors.Count, 1);
 

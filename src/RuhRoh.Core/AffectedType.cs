@@ -12,7 +12,7 @@ namespace RuhRoh.Core
 
         internal AffectedType() { }
 
-        public AffectedMethod<T, TOut> When<TOut>(Expression<Func<T, TOut>> functionExpression)
+        public AffectedMethod<T, TOut> WhenCalling<TOut>(Expression<Func<T, TOut>> functionExpression)
         {
             var expression = functionExpression.Body as MethodCallExpression;
             if (expression == null)

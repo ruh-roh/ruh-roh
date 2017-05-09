@@ -6,7 +6,7 @@ namespace RuhRoh.Core
 {
     public static class AffectedMethodExtensions
     {
-        public static void SlowDown(this IAffectedMethod affectedMethod, TimeSpan time)
+        public static void SlowItDownBy(this IAffectedMethod affectedMethod, TimeSpan time)
         {
             if (time.Ticks <= 0)
             {
