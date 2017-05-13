@@ -1,4 +1,5 @@
 ﻿using System;
+using RuhRoh.Core.Tests.Exceptions;
 using Xunit;
 using RuhRoh.Core.Tests.Services;
 using Xunit.Sdk;
@@ -27,7 +28,7 @@ namespace RuhRoh.Core.Tests
             var affectedService = ChaosEngine.Affect<DummyService>();
             affectedService
                 .WhenCalling(x => x.RetrieveData())
-                .SlowItDownBy(TimeSpan.FromMinutes(5));
+                .SlowItDownBy(TimeSpan.FromSeconds(5));
 
             var service = affectedService.Instance;
             var result = 0;
@@ -40,7 +41,22 @@ namespace RuhRoh.Core.Tests
 
             // Assert
             Assert.Equal(1, result);
-            Assert.InRange(t.Total, (decimal)TimeSpan.FromMinutes(5).TotalSeconds, (decimal)TimeSpan.FromMinutes(6).TotalSeconds);
+            Assert.InRange(t.Total, 4.8m, 5.2m);
+        }
+
+        [Fact]
+        public void Throw_Should_Throw_An_Exception()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<DummyService>();
+            affectedService
+                .WhenCalling(x => x.RetrieveData())
+                .Throw<TestException>();
+
+            var service = affectedService.Instance;
+            
+            // Act && Assert
+            Assert.Throws<TestException>(() => service.RetrieveData());
         }
     }
 }

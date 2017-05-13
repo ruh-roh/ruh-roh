@@ -2,7 +2,7 @@
 {
     public class DummyService
     {
-        public int RetrieveData()
+        public virtual int RetrieveData()
         {
             return 1;
         }

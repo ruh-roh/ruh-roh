@@ -2,6 +2,8 @@
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 using System.Reflection;
+using Castle.DynamicProxy;
+using RuhRoh.Core.ProxyGeneration;
 
 namespace RuhRoh.Core
 {
@@ -12,11 +14,19 @@ namespace RuhRoh.Core
             Affectors = new Collection<IAffector>();
         }
 
+        public string Name => Method?.Name;
+
+        public MethodInfo Method { get; protected internal set; }
         protected internal ICollection<IAffector> Affectors { get; }
 
         public void AddAffector(IAffector affector)
         {
             Affectors.Add(affector);
+        }
+
+        public IInterceptor GetInterceptor()
+        {
+            return new AffectorInterceptor(Affectors);
         }
     }
 
@@ -30,7 +40,6 @@ namespace RuhRoh.Core
             Object = methodCall.Object;
         }
 
-        public MethodInfo Method { get; }
         public IReadOnlyCollection<Expression> Arguments { get; }
         public Expression Object { get; }
     }
@@ -48,7 +57,6 @@ namespace RuhRoh.Core
 
         internal AffectedType<T> AffectedType { get; }
         internal Expression OriginalExpression { get; }
-        internal MethodInfo Method { get; }
         internal IReadOnlyCollection<Expression> Arguments { get; }
     }
 }
