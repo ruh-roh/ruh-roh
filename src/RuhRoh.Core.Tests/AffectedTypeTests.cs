@@ -79,5 +79,74 @@ namespace RuhRoh.Core.Tests
             Assert.Throws<TestException>(() => service.RetrieveData()); // all next calls should throw
             Assert.Throws<TestException>(() => service.RetrieveData());
         }
+
+        [Fact]
+        public void Throw_Should_Throw_An_Exception_Until_3rd_Call_Occurs()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<DummyService>();
+            affectedService
+                .WhenCalling(x => x.RetrieveData())
+                .Throw<TestException>()
+                .UntilNCalls(3);
+
+            var service = affectedService.Instance;
+
+            // Act && Assert
+            Assert.Throws<TestException>(() => service.RetrieveData()); // first should throw
+            Assert.Throws<TestException>(() => service.RetrieveData()); // second as well
+
+            service.RetrieveData(); // third call should pass
+            service.RetrieveData(); // fourth and next also
+            service.RetrieveData();
+        }
+
+        [Fact]
+        public void Throw_Should_Throw_An_Exception_At_3rd_Call()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<DummyService>();
+            affectedService
+                .WhenCalling(x => x.RetrieveData())
+                .Throw<TestException>()
+                .WhenCalledNTimes(3);
+
+            var service = affectedService.Instance;
+
+            // Act && Assert
+            service.RetrieveData(); // first call should pass
+            service.RetrieveData(); // second call also
+
+            Assert.Throws<TestException>(() => service.RetrieveData()); // third should throw
+
+            service.RetrieveData(); // fourth and next should pass again
+            service.RetrieveData();
+        }
+
+        [Fact]
+        public void Throw_Should_Throw_An_Exception_Every_3rd_Call()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<DummyService>();
+            affectedService
+                .WhenCalling(x => x.RetrieveData())
+                .Throw<TestException>()
+                .EveryNCalls(3);
+
+            var service = affectedService.Instance;
+
+            // Act && Assert
+            service.RetrieveData(); // first call should pass
+            service.RetrieveData(); // second call also
+
+            Assert.Throws<TestException>(() => service.RetrieveData()); // third should throw
+
+            service.RetrieveData(); // fourth and fifth should pass again
+            service.RetrieveData();
+
+            Assert.Throws<TestException>(() => service.RetrieveData()); // sixth should throw again
+
+            service.RetrieveData(); // next should pass again
+        }
     }
 }
