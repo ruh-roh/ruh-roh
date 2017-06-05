@@ -1,28 +1,34 @@
 ﻿using System;
 using RuhRoh.Core.Affectors;
 using System.Reflection;
+using RuhRoh.Core.Triggers;
+using RuhRoh.Core.Triggers.Internal;
+using Random = RuhRoh.Core.Triggers.Random;
 
 namespace RuhRoh.Core
 {
     public static class AffectedMethodExtensions
     {
-        public static void SlowItDownBy(this IAffectedMethod affectedMethod, TimeSpan time)
+        // Affectors
+
+        public static IAffectedMethod SlowItDownBy(this IAffectedMethod affectedMethod, TimeSpan time)
         {
             if (time.Ticks <= 0)
             {
-                return; // we can't speed up things
+                return affectedMethod; // we can't speed up things
             }
 
             affectedMethod.AddAffector(new Delayer(time));
+            return affectedMethod;
         }
 
-        public static void Throw<TException>(this IAffectedMethod affectedMethod)
+        public static IAffectedMethod Throw<TException>(this IAffectedMethod affectedMethod)
             where TException : Exception
         {
-            Throw(affectedMethod, typeof(TException));
+            return Throw(affectedMethod, typeof(TException));
         }
 
-        public static void Throw(this IAffectedMethod affectedMethod, Type exceptionType)
+        public static IAffectedMethod Throw(this IAffectedMethod affectedMethod, Type exceptionType)
         {
             if (exceptionType == null)
             {
@@ -37,10 +43,10 @@ namespace RuhRoh.Core
             }
 
             var ex = Activator.CreateInstance(exceptionType) as Exception;
-            Throw(affectedMethod, ex);
+            return Throw(affectedMethod, ex);
         }
 
-        public static void Throw(this IAffectedMethod affectedMethod, Exception exception)
+        public static IAffectedMethod Throw(this IAffectedMethod affectedMethod, Exception exception)
         {
             if (exception == null)
             {
@@ -48,6 +54,57 @@ namespace RuhRoh.Core
             }
 
             affectedMethod.AddAffector(new ExceptionThrower(exception));
+            return affectedMethod;
+        }
+
+        // Triggers
+
+        public static IAffectedMethod AtRandom(this IAffectedMethod affectedMethod)
+        {
+            affectedMethod.AddTrigger(new Random());
+            return affectedMethod;
+        }
+
+        public static IAffectedMethod After(this IAffectedMethod affectedMethod, DateTime moment)
+        {
+            affectedMethod.AddTrigger(new Timed(moment, TimedOperation.After));
+            return affectedMethod;
+        }
+
+        public static IAffectedMethod Before(this IAffectedMethod affectedMethod, DateTime moment)
+        {
+            affectedMethod.AddTrigger(new Timed(moment, TimedOperation.Before));
+            return affectedMethod;
+        }
+
+        public static IAffectedMethod Between(this IAffectedMethod affectedMethod, DateTime from, DateTime until)
+        {
+            affectedMethod.AddTrigger(new Timed(from, until));
+            return affectedMethod;
+        }
+
+        public static IAffectedMethod AfterNCalls(this IAffectedMethod affectedMethod, int calls)
+        {
+            affectedMethod.AddTrigger(new TimesCalled(TimesCalledOperation.After, calls));
+            return affectedMethod;
+        }
+
+        public static IAffectedMethod UntilNCalls(this IAffectedMethod affectedMethod, int calls)
+        {
+            affectedMethod.AddTrigger(new TimesCalled(TimesCalledOperation.Until, calls));
+            return affectedMethod;
+        }
+
+        public static IAffectedMethod WhenCalledNTimes(this IAffectedMethod affectedMethod, int calls)
+        {
+            affectedMethod.AddTrigger(new TimesCalled(TimesCalledOperation.At, calls));
+            return affectedMethod;
+        }
+
+        public static IAffectedMethod EveryNCalls(this IAffectedMethod affectedMethod, int calls)
+        {
+            affectedMethod.AddTrigger(new TimesCalled(TimesCalledOperation.EveryXCalls, calls));
+            return affectedMethod;
         }
     }
 }

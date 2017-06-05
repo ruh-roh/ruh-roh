@@ -16,7 +16,7 @@ namespace RuhRoh.Core.Triggers
             _randomizer = randomizer;
         }
 
-        public bool WillAffect()
+        bool ITrigger.WillAffect()
         {
             var nextRnd = _randomizer.Next();
             return nextRnd >= 0.5;

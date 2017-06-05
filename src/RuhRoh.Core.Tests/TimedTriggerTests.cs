@@ -10,7 +10,7 @@ namespace RuhRoh.Core.Tests
         [Fact]
         public void Timed_Should_Affect_When_Time_Is_After_With_After_Operation()
         {
-            var t = new Timed(DateTime.Now.AddHours(-1), TimedOperation.After);
+            ITrigger t = new Timed(DateTime.Now.AddHours(-1), TimedOperation.After);
 
             var result = t.WillAffect();
 
@@ -20,7 +20,7 @@ namespace RuhRoh.Core.Tests
         [Fact]
         public void Timed_Should_Not_Affect_When_Time_Is_Before_With_After_Operation()
         {
-            var t = new Timed(DateTime.Now.AddHours(1), TimedOperation.After);
+            ITrigger t = new Timed(DateTime.Now.AddHours(1), TimedOperation.After);
 
             var result = t.WillAffect();
 
@@ -30,7 +30,7 @@ namespace RuhRoh.Core.Tests
         [Fact]
         public void Timed_Should_Only_Affect_When_Time_Is_Before_With_Before_Operation()
         {
-            var t = new Timed(DateTime.Now.AddHours(1), TimedOperation.Before);
+            ITrigger t = new Timed(DateTime.Now.AddHours(1), TimedOperation.Before);
 
             var result = t.WillAffect();
 
@@ -40,7 +40,7 @@ namespace RuhRoh.Core.Tests
         [Fact]
         public void Timed_Should_Not_Affect_When_Time_Is_After_With_Before_Operation()
         {
-            var t = new Timed(DateTime.Now.AddHours(-1), TimedOperation.Before);
+            ITrigger t = new Timed(DateTime.Now.AddHours(-1), TimedOperation.Before);
 
             var result = t.WillAffect();
 
@@ -50,7 +50,7 @@ namespace RuhRoh.Core.Tests
         [Fact]
         public void Timed_Should_Affect_When_Time_Is_Between()
         {
-            var t = new Timed(DateTime.Now.AddHours(-1), DateTime.Now.AddHours(1));
+            ITrigger t = new Timed(DateTime.Now.AddHours(-1), DateTime.Now.AddHours(1));
 
             var result = t.WillAffect();
 
@@ -60,7 +60,7 @@ namespace RuhRoh.Core.Tests
         [Fact]
         public void Timed_Should_Not_Affect_When_Time_Is_Not_Between()
         {
-            var t = new Timed(DateTime.Now.AddHours(1), DateTime.Now.AddHours(2));
+            ITrigger t = new Timed(DateTime.Now.AddHours(1), DateTime.Now.AddHours(2));
 
             var result = t.WillAffect();
 

@@ -2,7 +2,7 @@
 
 namespace RuhRoh.Core.Triggers
 {
-    public class TimesCalled : ITrigger
+    public class TimesCalled : ITrigger, IUpdatableTrigger
     {
         private readonly TimesCalledOperation _operation;
         private readonly int _trigger;
@@ -15,7 +15,7 @@ namespace RuhRoh.Core.Triggers
 
         public int ActualTimesCalled { get; internal set; }
 
-        public bool WillAffect()
+        bool ITrigger.WillAffect()
         {
             if (ActualTimesCalled <= 0)
             {
@@ -35,6 +35,11 @@ namespace RuhRoh.Core.Triggers
             }
 
             return false;
+        }
+
+        void IUpdatableTrigger.Update()
+        {
+            ActualTimesCalled++;
         }
     }
 }

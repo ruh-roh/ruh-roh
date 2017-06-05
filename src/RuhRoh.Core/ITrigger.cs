@@ -4,4 +4,9 @@
     {
         bool WillAffect();
     }
+
+    public interface IUpdatableTrigger
+    {
+        void Update();
+    }
 }

@@ -17,7 +17,7 @@ namespace RuhRoh.Core.Tests
             var t = new TimesCalled(TimesCalledOperation.After, 3);
 
             t.ActualTimesCalled = timesCalled;
-            var result = t.WillAffect();
+            var result = ((ITrigger)t).WillAffect();
 
             Assert.True(result);
         }
@@ -31,7 +31,7 @@ namespace RuhRoh.Core.Tests
             var t = new TimesCalled(TimesCalledOperation.After, 3);
 
             t.ActualTimesCalled = timesCalled;
-            var result = t.WillAffect();
+            var result = ((ITrigger)t).WillAffect();
 
             Assert.False(result);
         }
@@ -42,7 +42,7 @@ namespace RuhRoh.Core.Tests
             var t = new TimesCalled(TimesCalledOperation.After, 3);
 
             t.ActualTimesCalled = 0;
-            var result = t.WillAffect();
+            var result = ((ITrigger)t).WillAffect();
 
             Assert.False(result);
         }
@@ -57,7 +57,7 @@ namespace RuhRoh.Core.Tests
             var t = new TimesCalled(TimesCalledOperation.Until, 3);
 
             t.ActualTimesCalled = timesCalled;
-            var result = t.WillAffect();
+            var result = ((ITrigger)t).WillAffect();
 
             Assert.False(result);
         }
@@ -70,7 +70,7 @@ namespace RuhRoh.Core.Tests
             var t = new TimesCalled(TimesCalledOperation.Until, 3);
 
             t.ActualTimesCalled = timesCalled;
-            var result = t.WillAffect();
+            var result = ((ITrigger)t).WillAffect();
 
             Assert.True(result);
         }
@@ -81,7 +81,7 @@ namespace RuhRoh.Core.Tests
             var t = new TimesCalled(TimesCalledOperation.Until, 3);
 
             t.ActualTimesCalled = 0;
-            var result = t.WillAffect();
+            var result = ((ITrigger)t).WillAffect();
 
             Assert.False(result);
         }
@@ -92,7 +92,7 @@ namespace RuhRoh.Core.Tests
             var t = new TimesCalled(TimesCalledOperation.At, 3);
 
             t.ActualTimesCalled = 3;
-            var result = t.WillAffect();
+            var result = ((ITrigger)t).WillAffect();
 
             Assert.True(result);
         }
@@ -108,7 +108,7 @@ namespace RuhRoh.Core.Tests
             var t = new TimesCalled(TimesCalledOperation.At, 3);
 
             t.ActualTimesCalled = timesCalled;
-            var result = t.WillAffect();
+            var result = ((ITrigger)t).WillAffect();
 
             Assert.False(result);
         }
@@ -122,7 +122,7 @@ namespace RuhRoh.Core.Tests
             var t = new TimesCalled(TimesCalledOperation.EveryXCalls, 3);
 
             t.ActualTimesCalled = timesCalled;
-            var result = t.WillAffect();
+            var result = ((ITrigger)t).WillAffect();
 
             Assert.True(result);
         }
@@ -139,7 +139,7 @@ namespace RuhRoh.Core.Tests
             var t = new TimesCalled(TimesCalledOperation.EveryXCalls, 3);
 
             t.ActualTimesCalled = timesCalled;
-            var result = t.WillAffect();
+            var result = ((ITrigger)t).WillAffect();
 
             Assert.False(result);
         }

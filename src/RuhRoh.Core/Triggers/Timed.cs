@@ -34,7 +34,7 @@ namespace RuhRoh.Core.Triggers
             _operation = TimedOperation.Between;
         }
 
-        public bool WillAffect()
+        bool ITrigger.WillAffect()
         {
             switch (_operation)
             {

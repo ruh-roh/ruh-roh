@@ -58,5 +58,26 @@ namespace RuhRoh.Core.Tests
             // Act && Assert
             Assert.Throws<TestException>(() => service.RetrieveData());
         }
+
+        [Fact]
+        public void Throw_Should_Throw_An_Exception_After_3rd_Call()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<DummyService>();
+            affectedService
+                .WhenCalling(x => x.RetrieveData())
+                .Throw<TestException>()
+                .AfterNCalls(3);
+
+            var service = affectedService.Instance;
+
+            // Act && Assert
+            service.RetrieveData(); // first call
+            service.RetrieveData(); // second call
+            service.RetrieveData(); // third call
+
+            Assert.Throws<TestException>(() => service.RetrieveData()); // all next calls should throw
+            Assert.Throws<TestException>(() => service.RetrieveData());
+        }
     }
 }

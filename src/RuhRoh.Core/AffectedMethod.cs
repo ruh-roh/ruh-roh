@@ -12,21 +12,28 @@ namespace RuhRoh.Core
         protected AffectedMethod()
         {
             Affectors = new Collection<IAffector>();
+            Triggers = new Collection<ITrigger>();
         }
 
         public string Name => Method?.Name;
 
         public MethodInfo Method { get; protected internal set; }
         protected internal ICollection<IAffector> Affectors { get; }
+        protected internal ICollection<ITrigger> Triggers { get; }
 
         public void AddAffector(IAffector affector)
         {
             Affectors.Add(affector);
         }
 
+        public void AddTrigger(ITrigger trigger)
+        {
+            Triggers.Add(trigger);
+        }
+
         public IInterceptor GetInterceptor()
         {
-            return new AffectorInterceptor(Affectors);
+            return new AffectorInterceptor(Affectors, Triggers);
         }
     }
 
