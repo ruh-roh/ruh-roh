@@ -33,7 +33,7 @@ namespace RuhRoh.Core
 
         public IInterceptor GetInterceptor()
         {
-            return new AffectorInterceptor(Affectors, Triggers);
+            return new AffectorInterceptor(Method, Affectors, Triggers);
         }
     }
 

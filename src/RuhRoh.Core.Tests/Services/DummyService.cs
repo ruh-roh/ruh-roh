@@ -6,5 +6,10 @@
         {
             return 1;
         }
+
+        public virtual int RetrieveDataUnaffected()
+        {
+            return 1;
+        }
     }
 }

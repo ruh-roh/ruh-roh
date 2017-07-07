@@ -45,6 +45,24 @@ namespace RuhRoh.Core.Tests
         }
 
         [Fact]
+        public void Affector_Should_Not_Affect_An_Unconfigured_Method()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<DummyService>();
+            affectedService
+                .WhenCalling(x => x.RetrieveData())
+                .Throw<TestException>();
+
+            var service = affectedService.Instance;
+
+            // Act
+            var result = service.RetrieveDataUnaffected();
+            
+            // Assert
+            Assert.Equal(1, result);
+        }
+
+        [Fact]
         public void Throw_Should_Throw_An_Exception()
         {
             // Arrange
@@ -54,7 +72,7 @@ namespace RuhRoh.Core.Tests
                 .Throw<TestException>();
 
             var service = affectedService.Instance;
-            
+
             // Act && Assert
             Assert.Throws<TestException>(() => service.RetrieveData());
         }
