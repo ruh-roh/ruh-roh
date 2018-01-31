@@ -27,14 +27,8 @@ namespace RuhRoh.Core.Tests
             var exception = new InvalidOperationException();
             var affector = new ExceptionThrower(exception);
 
-            try
-            {
-                affector.Affect();
-            }
-            catch (Exception e)
-            {
-                Assert.Equal(e, exception);
-            }
+            var e = Assert.Throws<InvalidOperationException>(() => affector.Affect());
+            Assert.Equal(e, exception);
         }
     }
 }
