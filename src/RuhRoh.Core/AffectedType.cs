@@ -20,8 +20,7 @@ namespace RuhRoh.Core
 
         public AffectedMethod<T, TOut> WhenCalling<TOut>(Expression<Func<T, TOut>> expression)
         {
-            var mc = expression.Body as MethodCallExpression;
-            if (mc == null)
+            if (!(expression.Body is MethodCallExpression mc))
             {
                 // TODO Move to constants/resx
                 throw new ArgumentException("invalid expression type");
