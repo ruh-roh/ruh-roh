@@ -90,9 +90,9 @@ namespace RuhRoh.Core.Tests
             var service = affectedService.Instance;
 
             // Act && Assert
-            service.RetrieveData(); // first call
-            service.RetrieveData(); // second call
-            service.RetrieveData(); // third call
+            Assert.Equal(1, service.RetrieveData()); // first call
+            Assert.Equal(1, service.RetrieveData()); // second call
+            Assert.Equal(1, service.RetrieveData()); // third call
 
             Assert.Throws<TestException>(() => service.RetrieveData()); // all next calls should throw
             Assert.Throws<TestException>(() => service.RetrieveData());
@@ -114,9 +114,9 @@ namespace RuhRoh.Core.Tests
             Assert.Throws<TestException>(() => service.RetrieveData()); // first should throw
             Assert.Throws<TestException>(() => service.RetrieveData()); // second as well
 
-            service.RetrieveData(); // third call should pass
-            service.RetrieveData(); // fourth and next also
-            service.RetrieveData();
+            Assert.Equal(1, service.RetrieveData()); // third call should pass
+            Assert.Equal(1, service.RetrieveData()); // fourth and next also
+            Assert.Equal(1, service.RetrieveData());
         }
 
         [Fact]
@@ -132,13 +132,13 @@ namespace RuhRoh.Core.Tests
             var service = affectedService.Instance;
 
             // Act && Assert
-            service.RetrieveData(); // first call should pass
-            service.RetrieveData(); // second call also
+            Assert.Equal(1, service.RetrieveData()); // first call should pass
+            Assert.Equal(1, service.RetrieveData()); // second call also
 
             Assert.Throws<TestException>(() => service.RetrieveData()); // third should throw
 
-            service.RetrieveData(); // fourth and next should pass again
-            service.RetrieveData();
+            Assert.Equal(1, service.RetrieveData()); // fourth and next should pass again
+            Assert.Equal(1, service.RetrieveData());
         }
 
         [Fact]
@@ -154,17 +154,45 @@ namespace RuhRoh.Core.Tests
             var service = affectedService.Instance;
 
             // Act && Assert
-            service.RetrieveData(); // first call should pass
-            service.RetrieveData(); // second call also
+            Assert.Equal(1, service.RetrieveData()); // first call should pass
+            Assert.Equal(1, service.RetrieveData()); // second call also
 
             Assert.Throws<TestException>(() => service.RetrieveData()); // third should throw
 
-            service.RetrieveData(); // fourth and fifth should pass again
-            service.RetrieveData();
+            Assert.Equal(1, service.RetrieveData()); // fourth and fifth should pass again
+            Assert.Equal(1, service.RetrieveData());
 
             Assert.Throws<TestException>(() => service.RetrieveData()); // sixth should throw again
 
-            service.RetrieveData(); // next should pass again
+            Assert.Equal(1, service.RetrieveData()); // next should pass again
+        }
+
+        [Fact]
+        public void Throw_Should_Throw_Two_Different_Exception_Types()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<DummyService>();
+            affectedService
+                .WhenCalling(x => x.RetrieveData())
+                .Throw<TestException>()
+                .UntilNCalls(3);
+
+            affectedService
+                .WhenCalling(x => x.RetrieveData())
+                .Throw<SecondaryTestException>()
+                .AfterNCalls(3);
+
+            var service = affectedService.Instance;
+
+            // Act && Assert
+            Assert.Throws<TestException>(() => service.RetrieveData()); // first and second should throw
+            Assert.Throws<TestException>(() => service.RetrieveData());
+            
+            // Third call should go through
+            Assert.Equal(1, service.RetrieveData());
+
+            Assert.Throws<SecondaryTestException>(() => service.RetrieveData()); // fourth and next calls should throw a different exception
+            Assert.Throws<SecondaryTestException>(() => service.RetrieveData());
         }
     }
 }
