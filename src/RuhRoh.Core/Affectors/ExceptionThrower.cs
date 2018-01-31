@@ -1,8 +1,9 @@
 ﻿using System;
+using RuhRoh.Core.Affectors.Internal;
 
 namespace RuhRoh.Core.Affectors
 {
-    public class ExceptionThrower : IAffector
+    public class ExceptionThrower : AffectorBase
     {
         private readonly Exception _exception;
 
@@ -11,7 +12,7 @@ namespace RuhRoh.Core.Affectors
             _exception = exception;
         }
 
-        public void Affect()
+        public sealed override void Affect()
         {
             throw _exception;
         }

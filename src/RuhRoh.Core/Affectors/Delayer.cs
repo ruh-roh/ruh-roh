@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
+using RuhRoh.Core.Affectors.Internal;
 
 namespace RuhRoh.Core.Affectors
 {
-    public class Delayer : IAffector
+    public class Delayer : AffectorBase
     {
         private readonly TimeSpan _delay;
 
@@ -12,7 +13,7 @@ namespace RuhRoh.Core.Affectors
             _delay = delay;
         }
 
-        public void Affect()
+        public sealed override void Affect()
         {
             Task.Delay(_delay).GetAwaiter().GetResult();
         }

@@ -6,8 +6,8 @@ namespace RuhRoh.Core
     {
         string Name { get; }
 
-        void AddAffector(IAffector affector);
-        void AddTrigger(ITrigger trigger);
+        IAffector AddAffector(IAffector affector);
+        void AddTrigger(IAffector affector, ITrigger trigger);
 
         IInterceptor GetInterceptor();
     }

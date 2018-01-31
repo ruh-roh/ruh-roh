@@ -11,24 +11,24 @@ namespace RuhRoh.Core
     {
         // Affectors
 
-        public static IAffectedMethod SlowItDownBy(this IAffectedMethod affectedMethod, TimeSpan time)
+        public static IAffector SlowItDownBy(this IAffectedMethod affectedMethod, TimeSpan time)
         {
             if (time.Ticks <= 0)
             {
-                return affectedMethod; // we can't speed up things
+                // TODO Needs explanation
+                throw new ArgumentOutOfRangeException(); // we can't speed up things
             }
 
-            affectedMethod.AddAffector(new Delayer(time));
-            return affectedMethod;
+            return affectedMethod.AddAffector(new Delayer(time));
         }
 
-        public static IAffectedMethod Throw<TException>(this IAffectedMethod affectedMethod)
+        public static IAffector Throw<TException>(this IAffectedMethod affectedMethod)
             where TException : Exception
         {
             return Throw(affectedMethod, typeof(TException));
         }
 
-        public static IAffectedMethod Throw(this IAffectedMethod affectedMethod, Type exceptionType)
+        public static IAffector Throw(this IAffectedMethod affectedMethod, Type exceptionType)
         {
             if (exceptionType == null)
             {
@@ -46,65 +46,64 @@ namespace RuhRoh.Core
             return Throw(affectedMethod, ex);
         }
 
-        public static IAffectedMethod Throw(this IAffectedMethod affectedMethod, Exception exception)
+        public static IAffector Throw(this IAffectedMethod affectedMethod, Exception exception)
         {
             if (exception == null)
             {
                 throw new ArgumentNullException(nameof(exception));
             }
 
-            affectedMethod.AddAffector(new ExceptionThrower(exception));
-            return affectedMethod;
+            return affectedMethod.AddAffector(new ExceptionThrower(exception));
         }
 
         // Triggers
 
-        public static IAffectedMethod AtRandom(this IAffectedMethod affectedMethod)
+        public static IAffector AtRandom(this IAffector affector)
         {
-            affectedMethod.AddTrigger(new Random());
-            return affectedMethod;
+            affector.AddTrigger(new Random());
+            return affector;
         }
 
-        public static IAffectedMethod After(this IAffectedMethod affectedMethod, DateTime moment)
+        public static IAffector After(this IAffector affector, DateTime moment)
         {
-            affectedMethod.AddTrigger(new Timed(moment, TimedOperation.After));
-            return affectedMethod;
+            affector.AddTrigger(new Timed(moment, TimedOperation.After));
+            return affector;
         }
 
-        public static IAffectedMethod Before(this IAffectedMethod affectedMethod, DateTime moment)
+        public static IAffector Before(this IAffector affector, DateTime moment)
         {
-            affectedMethod.AddTrigger(new Timed(moment, TimedOperation.Before));
-            return affectedMethod;
+            affector.AddTrigger(new Timed(moment, TimedOperation.Before));
+            return affector;
         }
 
-        public static IAffectedMethod Between(this IAffectedMethod affectedMethod, DateTime from, DateTime until)
+        public static IAffector Between(this IAffector affector, DateTime from, DateTime until)
         {
-            affectedMethod.AddTrigger(new Timed(from, until));
-            return affectedMethod;
+            affector.AddTrigger(new Timed(from, until));
+            return affector;
         }
 
-        public static IAffectedMethod AfterNCalls(this IAffectedMethod affectedMethod, int calls)
+        public static IAffector AfterNCalls(this IAffector affector, int calls)
         {
-            affectedMethod.AddTrigger(new TimesCalled(TimesCalledOperation.After, calls));
-            return affectedMethod;
+            affector.AddTrigger(new TimesCalled(TimesCalledOperation.After, calls));
+            return affector;
         }
 
-        public static IAffectedMethod UntilNCalls(this IAffectedMethod affectedMethod, int calls)
+        public static IAffector UntilNCalls(this IAffector affector, int calls)
         {
-            affectedMethod.AddTrigger(new TimesCalled(TimesCalledOperation.Until, calls));
-            return affectedMethod;
+            affector.AddTrigger(new TimesCalled(TimesCalledOperation.Until, calls));
+            return affector;
         }
 
-        public static IAffectedMethod WhenCalledNTimes(this IAffectedMethod affectedMethod, int calls)
+        public static IAffector WhenCalledNTimes(this IAffector affector, int calls)
         {
-            affectedMethod.AddTrigger(new TimesCalled(TimesCalledOperation.At, calls));
-            return affectedMethod;
+            affector.AddTrigger(new TimesCalled(TimesCalledOperation.At, calls));
+            return affector;
         }
 
-        public static IAffectedMethod EveryNCalls(this IAffectedMethod affectedMethod, int calls)
+        public static IAffector EveryNCalls(this IAffector affector, int calls)
         {
-            affectedMethod.AddTrigger(new TimesCalled(TimesCalledOperation.EveryXCalls, calls));
-            return affectedMethod;
+            affector.AddTrigger(new TimesCalled(TimesCalledOperation.EveryXCalls, calls));
+            return affector;
         }
     }
 }

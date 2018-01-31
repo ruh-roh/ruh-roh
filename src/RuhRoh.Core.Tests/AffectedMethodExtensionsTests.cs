@@ -24,9 +24,7 @@ namespace RuhRoh.Core.Tests
         {
             var affectedMethod = GetAffectedMethod();
 
-            affectedMethod.SlowItDownBy(TimeSpan.FromSeconds(seconds));
-
-            Assert.Equal(0, affectedMethod.Affectors.Count);
+            Assert.Throws<ArgumentOutOfRangeException>(() => affectedMethod.SlowItDownBy(TimeSpan.FromSeconds(seconds)));
         }
 
         [Theory]
