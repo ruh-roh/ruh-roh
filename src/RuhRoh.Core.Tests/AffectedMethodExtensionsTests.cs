@@ -26,7 +26,7 @@ namespace RuhRoh.Core.Tests
 
             affectedMethod.SlowItDownBy(TimeSpan.FromSeconds(seconds));
 
-            Assert.Equal(affectedMethod.Affectors.Count, 0);
+            Assert.Equal(0, affectedMethod.Affectors.Count);
         }
 
         [Theory]
@@ -40,7 +40,7 @@ namespace RuhRoh.Core.Tests
 
             affectedMethod.SlowItDownBy(TimeSpan.FromSeconds(seconds));
 
-            Assert.Equal(affectedMethod.Affectors.Count, 1);
+            Assert.Equal(1, affectedMethod.Affectors.Count);
 
             var affector = affectedMethod.Affectors.First();
             Assert.IsType<Delayer>(affector);
@@ -69,7 +69,7 @@ namespace RuhRoh.Core.Tests
 
             affectedMethod.Throw<InvalidOperationException>();
 
-            Assert.Equal(affectedMethod.Affectors.Count, 1);
+            Assert.Equal(1, affectedMethod.Affectors.Count);
             Assert.IsType<ExceptionThrower>(affectedMethod.Affectors.First());
         }
 
@@ -80,7 +80,7 @@ namespace RuhRoh.Core.Tests
 
             affectedMethod.Throw<Exception>();
 
-            Assert.Equal(affectedMethod.Affectors.Count, 1);
+            Assert.Equal(1, affectedMethod.Affectors.Count);
             Assert.IsType<ExceptionThrower>(affectedMethod.Affectors.First());
         }
 
@@ -91,7 +91,7 @@ namespace RuhRoh.Core.Tests
 
             affectedMethod.Throw(typeof(InvalidOperationException));
 
-            Assert.Equal(affectedMethod.Affectors.Count, 1);
+            Assert.Equal(1, affectedMethod.Affectors.Count);
             Assert.IsType<ExceptionThrower>(affectedMethod.Affectors.First());
         }
 
@@ -102,7 +102,7 @@ namespace RuhRoh.Core.Tests
 
             affectedMethod.Throw(new InvalidOperationException());
 
-            Assert.Equal(affectedMethod.Affectors.Count, 1);
+            Assert.Equal(1, affectedMethod.Affectors.Count);
             Assert.IsType<ExceptionThrower>(affectedMethod.Affectors.First());
         }
     }
