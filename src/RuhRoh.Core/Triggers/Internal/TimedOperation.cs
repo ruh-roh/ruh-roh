@@ -1,6 +1,6 @@
 ﻿namespace RuhRoh.Core.Triggers.Internal
 {
-    public enum TimedOperation
+    internal enum TimedOperation
     {
         After = 1,
         Before = 2,

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Specialized;
 using RuhRoh.Core.Triggers.Internal;
 
 namespace RuhRoh.Core.Triggers
@@ -10,7 +9,7 @@ namespace RuhRoh.Core.Triggers
         private readonly DateTime _end;
         private readonly TimedOperation _operation;
 
-        public Timed(DateTime when, TimedOperation operation)
+        internal Timed(DateTime when, TimedOperation operation)
         {
             if (operation == TimedOperation.Between)
             {

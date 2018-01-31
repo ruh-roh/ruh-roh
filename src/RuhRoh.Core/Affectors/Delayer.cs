@@ -14,7 +14,7 @@ namespace RuhRoh.Core.Affectors
 
         public void Affect()
         {
-            Task.Delay(_delay).Wait();
+            Task.Delay(_delay).GetAwaiter().GetResult();
         }
     }
 }

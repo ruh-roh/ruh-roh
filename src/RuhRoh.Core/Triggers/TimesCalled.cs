@@ -7,7 +7,7 @@ namespace RuhRoh.Core.Triggers
         private readonly TimesCalledOperation _operation;
         private readonly int _trigger;
 
-        public TimesCalled(TimesCalledOperation operation, int trigger)
+        internal TimesCalled(TimesCalledOperation operation, int trigger)
         {
             _operation = operation;
             _trigger = trigger;
