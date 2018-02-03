@@ -1,9 +1,9 @@
 ﻿using System;
-using RuhRoh.Core.Affectors.Internal;
+using RuhRoh.Affectors.Internal;
 
-namespace RuhRoh.Core.Affectors
+namespace RuhRoh.Affectors
 {
-    public class ExceptionThrower : AffectorBase
+    internal class ExceptionThrower : AffectorBase
     {
         private readonly Exception _exception;
 

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using RuhRoh.Core.Affectors.Internal;
+using RuhRoh.Affectors.Internal;
 
-namespace RuhRoh.Core.Affectors
+namespace RuhRoh.Affectors
 {
-    public class Delayer : AffectorBase
+    internal class Delayer : AffectorBase
     {
         private readonly TimeSpan _delay;
 

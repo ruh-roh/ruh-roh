@@ -1,15 +1,15 @@
 ﻿using System;
-using RuhRoh.Core.Triggers.Internal;
+using RuhRoh.Triggers.Internal;
 
-namespace RuhRoh.Core.Triggers
+namespace RuhRoh.Triggers
 {
-    public class Timed : ITrigger
+    internal class TimedTrigger : ITrigger
     {
         private readonly DateTime _when;
         private readonly DateTime _end;
         private readonly TimedOperation _operation;
 
-        internal Timed(DateTime when, TimedOperation operation)
+        internal TimedTrigger(DateTime when, TimedOperation operation)
         {
             if (operation == TimedOperation.Between)
             {
@@ -20,7 +20,7 @@ namespace RuhRoh.Core.Triggers
             _operation = operation;
         }
 
-        public Timed(DateTime from, DateTime until)
+        public TimedTrigger(DateTime from, DateTime until)
         {
             if (from > until)
             {

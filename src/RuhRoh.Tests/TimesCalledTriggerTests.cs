@@ -1,8 +1,8 @@
-﻿using RuhRoh.Core.Triggers;
-using RuhRoh.Core.Triggers.Internal;
+﻿using RuhRoh.Triggers;
+using RuhRoh.Triggers.Internal;
 using Xunit;
 
-namespace RuhRoh.Core.Tests
+namespace RuhRoh.Tests
 {
     public class TimesCalledTriggerTests
     {
@@ -14,7 +14,7 @@ namespace RuhRoh.Core.Tests
         [InlineData(123409287)]
         public void After_Should_Affect_When_Actually_After(int timesCalled)
         {
-            var t = new TimesCalled(TimesCalledOperation.After, 3);
+            var t = new TimesCalledTrigger(TimesCalledOperation.After, 3);
 
             t.ActualTimesCalled = timesCalled;
             var result = ((ITrigger)t).WillAffect();
@@ -28,7 +28,7 @@ namespace RuhRoh.Core.Tests
         [InlineData(3)]
         public void After_Should_Not_Affect_When_Not_After(int timesCalled)
         {
-            var t = new TimesCalled(TimesCalledOperation.After, 3);
+            var t = new TimesCalledTrigger(TimesCalledOperation.After, 3);
 
             t.ActualTimesCalled = timesCalled;
             var result = ((ITrigger)t).WillAffect();
@@ -39,7 +39,7 @@ namespace RuhRoh.Core.Tests
         [Fact]
         public void After_Should_Not_Affect_When_Not_Called()
         {
-            var t = new TimesCalled(TimesCalledOperation.After, 3);
+            var t = new TimesCalledTrigger(TimesCalledOperation.After, 3);
 
             t.ActualTimesCalled = 0;
             var result = ((ITrigger)t).WillAffect();
@@ -54,7 +54,7 @@ namespace RuhRoh.Core.Tests
         [InlineData(123409287)]
         public void Until_Should_Not_Affect_When_After(int timesCalled)
         {
-            var t = new TimesCalled(TimesCalledOperation.Until, 3);
+            var t = new TimesCalledTrigger(TimesCalledOperation.Until, 3);
 
             t.ActualTimesCalled = timesCalled;
             var result = ((ITrigger)t).WillAffect();
@@ -67,7 +67,7 @@ namespace RuhRoh.Core.Tests
         [InlineData(2)]
         public void Until_Should_Affect_When_Actually_Before(int timesCalled)
         {
-            var t = new TimesCalled(TimesCalledOperation.Until, 3);
+            var t = new TimesCalledTrigger(TimesCalledOperation.Until, 3);
 
             t.ActualTimesCalled = timesCalled;
             var result = ((ITrigger)t).WillAffect();
@@ -78,7 +78,7 @@ namespace RuhRoh.Core.Tests
         [Fact]
         public void Until_Should_Not_Affect_When_Not_Called()
         {
-            var t = new TimesCalled(TimesCalledOperation.Until, 3);
+            var t = new TimesCalledTrigger(TimesCalledOperation.Until, 3);
 
             t.ActualTimesCalled = 0;
             var result = ((ITrigger)t).WillAffect();
@@ -89,7 +89,7 @@ namespace RuhRoh.Core.Tests
         [Fact]
         public void At_Should_Affect_When_Exact_Times_Called()
         {
-            var t = new TimesCalled(TimesCalledOperation.At, 3);
+            var t = new TimesCalledTrigger(TimesCalledOperation.At, 3);
 
             t.ActualTimesCalled = 3;
             var result = ((ITrigger)t).WillAffect();
@@ -105,7 +105,7 @@ namespace RuhRoh.Core.Tests
         [InlineData(5)]
         public void At_Should_Not_Affect_When_Not_Exact_Times_Called(int timesCalled)
         {
-            var t = new TimesCalled(TimesCalledOperation.At, 3);
+            var t = new TimesCalledTrigger(TimesCalledOperation.At, 3);
 
             t.ActualTimesCalled = timesCalled;
             var result = ((ITrigger)t).WillAffect();
@@ -119,7 +119,7 @@ namespace RuhRoh.Core.Tests
         [InlineData(9)]
         public void EveryXCalls_Should_Affect_When_Multiple_Of_X(int timesCalled)
         {
-            var t = new TimesCalled(TimesCalledOperation.EveryXCalls, 3);
+            var t = new TimesCalledTrigger(TimesCalledOperation.EveryXCalls, 3);
 
             t.ActualTimesCalled = timesCalled;
             var result = ((ITrigger)t).WillAffect();
@@ -136,7 +136,7 @@ namespace RuhRoh.Core.Tests
         [InlineData(7)]
         public void EveryXCalls_Should_Not_Affect_When_Not_Multiple_Of_X(int timesCalled)
         {
-            var t = new TimesCalled(TimesCalledOperation.EveryXCalls, 3);
+            var t = new TimesCalledTrigger(TimesCalledOperation.EveryXCalls, 3);
 
             t.ActualTimesCalled = timesCalled;
             var result = ((ITrigger)t).WillAffect();

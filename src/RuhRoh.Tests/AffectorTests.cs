@@ -1,6 +1,6 @@
 ﻿using System;
+using RuhRoh.Affectors;
 using Xunit;
-using RuhRoh.Core.Affectors;
 using Xunit.Sdk;
 
 namespace RuhRoh.Core.Tests

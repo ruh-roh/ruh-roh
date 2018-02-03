@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
 
-namespace RuhRoh.Core.Affectors.Internal
+namespace RuhRoh.Affectors.Internal
 {
-    public abstract class AffectorBase : IAffector
+    internal abstract class AffectorBase : IAffector
     {
-        internal AffectorBase() {}
-
         private readonly List<ITrigger> _triggers = new List<ITrigger>();
 
         public ITrigger[] Triggers => _triggers.ToArray();

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using RuhRoh.Core.Affectors;
+using RuhRoh.Affectors;
 using RuhRoh.Core.Tests.Services;
 using Xunit;
 

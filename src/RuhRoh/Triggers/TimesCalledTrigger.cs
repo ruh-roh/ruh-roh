@@ -1,13 +1,13 @@
-﻿using RuhRoh.Core.Triggers.Internal;
+﻿using RuhRoh.Triggers.Internal;
 
-namespace RuhRoh.Core.Triggers
+namespace RuhRoh.Triggers
 {
-    public class TimesCalled : ITrigger, IUpdatableTrigger
+    internal class TimesCalledTrigger : ITrigger, IUpdatableTrigger
     {
         private readonly TimesCalledOperation _operation;
         private readonly int _trigger;
 
-        internal TimesCalled(TimesCalledOperation operation, int trigger)
+        internal TimesCalledTrigger(TimesCalledOperation operation, int trigger)
         {
             _operation = operation;
             _trigger = trigger;

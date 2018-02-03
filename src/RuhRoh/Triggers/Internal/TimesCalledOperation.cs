@@ -1,4 +1,4 @@
-﻿namespace RuhRoh.Core.Triggers.Internal
+﻿namespace RuhRoh.Triggers.Internal
 {
     internal enum TimesCalledOperation
     {

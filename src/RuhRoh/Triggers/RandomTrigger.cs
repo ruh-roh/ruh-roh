@@ -1,17 +1,17 @@
-﻿using RuhRoh.Core.Triggers.Internal;
+﻿using RuhRoh.Triggers.Internal;
 
-namespace RuhRoh.Core.Triggers
+namespace RuhRoh.Triggers
 {
-    public class Random : ITrigger
+    internal class RandomTrigger : ITrigger
     {
         private readonly IRandomizer _randomizer;
 
-        public Random()
+        public RandomTrigger()
         {
             _randomizer = new DefaultRandomizer();
         }
 
-        public Random(IRandomizer randomizer)
+        public RandomTrigger(IRandomizer randomizer)
         {
             _randomizer = randomizer;
         }

@@ -2,7 +2,7 @@
 using System.Reflection;
 using Castle.DynamicProxy;
 
-namespace RuhRoh.Core.ProxyGeneration
+namespace RuhRoh.ProxyGeneration
 {
     internal class AffectorProxyGenerationHook : IProxyGenerationHook
     {

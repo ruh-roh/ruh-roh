@@ -1,7 +1,8 @@
-﻿using RuhRoh.Core.Triggers;
+﻿using RuhRoh.Triggers;
+using RuhRoh.Triggers.Internal;
 using Xunit;
 
-namespace RuhRoh.Core.Tests
+namespace RuhRoh.Tests
 {
     public class RandomTriggerTests
     {
@@ -14,7 +15,7 @@ namespace RuhRoh.Core.Tests
         public void Random_Should_Trigger_When_Randomizer_Returns_Zero_Point_Five_Or_Higher(double rnd)
         {
             var randomizer = new TestRandomizer(rnd);
-            ITrigger t = new Random(randomizer);
+            ITrigger t = new RandomTrigger(randomizer);
 
             var result = t.WillAffect();
 
@@ -30,7 +31,7 @@ namespace RuhRoh.Core.Tests
         public void Random_Should_Not_Trigger_When_Randomizer_Returns_Less_Than_Zero_Point_Five(double rnd)
         {
             var randomizer = new TestRandomizer(rnd);
-            ITrigger t = new Random(randomizer);
+            ITrigger t = new RandomTrigger(randomizer);
 
             var result = t.WillAffect();
 
