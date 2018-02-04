@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Summary>A chaos testing library for .NET</Summary>
+    <Description>A chaos testing library for .NET. Ruh Roh allows you to reconfigure your dependencies (like an HTTP service) in order to simulate service outages, slow network connections, and so on. This can help to improve your software and allows for testing these - and more! - scenarios without having to actually affect other live services.</Description>
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <Authors>Wesley Cabus</Authors>
+    <TargetFramework>netstandard1.3</TargetFramework>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <RootNamespace>RuhRoh</RootNamespace>
+    <AssemblyName>RuhRoh.Abstractions</AssemblyName>
+    <PackageId>RuhRoh.Abstractions</PackageId>
+    <PackageLicenseUrl>https://github.com/ruh-roh/ruh-roh/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/ruh-roh/ruh-roh</PackageProjectUrl>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
+</Project>
