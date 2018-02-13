@@ -1,4 +1,4 @@
-﻿namespace RuhRoh.Core.Tests.Services
+﻿namespace RuhRoh.Tests.Services
 {
     public class DummyService
     {

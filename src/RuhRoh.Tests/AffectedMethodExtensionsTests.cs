@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using RuhRoh.Affectors;
-using RuhRoh.Core.Tests.Services;
+using RuhRoh.Tests.Services;
 using Xunit;
 
-namespace RuhRoh.Core.Tests
+namespace RuhRoh.Tests
 {
     public class AffectedMethodExtensionsTests
     {

@@ -1,10 +1,11 @@
 ﻿using System;
-using RuhRoh.Core.Tests.Exceptions;
+using RuhRoh.Tests.Exceptions;
 using Xunit;
-using RuhRoh.Core.Tests.Services;
+using RuhRoh.Tests.Services;
 using Xunit.Sdk;
+using System.Linq;
 
-namespace RuhRoh.Core.Tests
+namespace RuhRoh.Tests
 {
     public class AffectedTypeTests
     {
@@ -13,6 +14,32 @@ namespace RuhRoh.Core.Tests
         {
             // Arrange
             var affectedService = ChaosEngine.Affect<DummyService>();
+
+            // Act
+            var service = affectedService.Instance;
+
+            // Assert
+            Assert.NotNull(service);
+        }
+
+        [Fact]
+        public void ChaosEngine_Affect_Should_Return_An_Instance_When_Using_A_Custom_Factory_Method()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect(() => new DummyService());
+
+            // Act
+            var service = affectedService.Instance;
+
+            // Assert
+            Assert.NotNull(service);
+        }
+
+        [Fact]
+        public void ChaosEngine_Affect_Should_Return_An_Instance_When_Using_A_Custom_Factory_Method_For_An_Interface()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
 
             // Act
             var service = affectedService.Instance;
@@ -193,6 +220,42 @@ namespace RuhRoh.Core.Tests
 
             Assert.Throws<SecondaryTestException>(() => service.RetrieveData()); // fourth and next calls should throw a different exception
             Assert.Throws<SecondaryTestException>(() => service.RetrieveData());
+        }
+
+        [Fact]
+        public void Throw_Should_Throw_An_Exception_For_An_Interface_Based_Service()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
+            affectedService
+                .WhenCalling(x => x.GetIdList())
+                .Throw<TestException>();
+
+            var service = affectedService.Instance;
+
+            // Act && Assert
+            Assert.Throws<TestException>(() => service.GetIdList());
+        }
+
+        [Fact]
+        public void Throw_Should_Throw_An_Exception_For_An_Interface_Based_Service_Only_Once()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
+            affectedService
+                .WhenCalling(x => x.GetIdList())
+                .Throw<TestException>()
+                .UntilNCalls(2);
+
+            var service = affectedService.Instance;
+
+            // Act && Assert
+            Assert.Throws<TestException>(() => service.GetIdList());
+
+            var idList = service.GetIdList();
+            Assert.NotNull(idList);
+            Assert.Equal(4, idList.Count());
+            Assert.Equal(1, idList.First());
         }
     }
 }

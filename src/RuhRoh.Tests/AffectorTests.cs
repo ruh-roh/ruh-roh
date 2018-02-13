@@ -3,7 +3,7 @@ using RuhRoh.Affectors;
 using Xunit;
 using Xunit.Sdk;
 
-namespace RuhRoh.Core.Tests
+namespace RuhRoh.Tests
 {
     public class AffectorTests
     {

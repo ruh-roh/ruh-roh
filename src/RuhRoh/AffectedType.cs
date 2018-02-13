@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using Castle.DynamicProxy;
 using RuhRoh.ProxyGeneration;
 
@@ -15,8 +16,19 @@ namespace RuhRoh
         where T : class
     {
         private readonly Dictionary<string, IAffectedMethod> _affectedMethods = new Dictionary<string, IAffectedMethod>();
+        private Func<T> _factoryMethod;
 
-        internal AffectedType() { }
+        internal AffectedType() 
+        {
+            // When no factory method is given, generate a default one using Activator
+            // This is not really intended to be used in the real world though.
+            _factoryMethod = () => Activator.CreateInstance<T>();
+        }
+
+        internal AffectedType(Func<T> factoryMethod)
+        {
+            _factoryMethod = factoryMethod;
+        }
 
         /// <summary>
         /// Configures the method defined by <paramref name="expression"/>.
@@ -61,8 +73,19 @@ namespace RuhRoh
                 interceptors.Add(((AffectedMethod)affectedMethod).GetInterceptor());
             }
 
-            return proxyGen.CreateClassProxy<T>(
-                new ProxyGenerationOptions(new AffectorProxyGenerationHook()),
+            var proxyGenOptions = new ProxyGenerationOptions(new AffectorProxyGenerationHook());
+            
+            if (typeof(T).GetTypeInfo().IsInterface)
+            {
+                return proxyGen.CreateInterfaceProxyWithTarget(
+                    _factoryMethod(),
+                    proxyGenOptions,
+                    interceptors.ToArray());
+            }
+
+            return proxyGen.CreateClassProxyWithTarget(
+                _factoryMethod(), 
+                proxyGenOptions, 
                 interceptors.ToArray());
         }
     }
