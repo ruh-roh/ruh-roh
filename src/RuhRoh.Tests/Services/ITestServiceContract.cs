@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using RuhRoh.Tests.Models;
 
 namespace RuhRoh.Tests.Services
 {
     public interface ITestServiceContract
     {
-        IEnumerable<int> GetIdList();
+        IEnumerable<TestItem> GetItems();
+        TestItem GetItemById(int id);
     }
 }

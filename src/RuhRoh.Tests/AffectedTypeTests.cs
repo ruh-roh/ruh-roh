@@ -228,13 +228,13 @@ namespace RuhRoh.Tests
             // Arrange
             var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
             affectedService
-                .WhenCalling(x => x.GetIdList())
+                .WhenCalling(x => x.GetItems())
                 .Throw<TestException>();
 
             var service = affectedService.Instance;
 
             // Act && Assert
-            Assert.Throws<TestException>(() => service.GetIdList());
+            Assert.Throws<TestException>(() => service.GetItems());
         }
 
         [Fact]
@@ -243,19 +243,19 @@ namespace RuhRoh.Tests
             // Arrange
             var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
             affectedService
-                .WhenCalling(x => x.GetIdList())
+                .WhenCalling(x => x.GetItems())
                 .Throw<TestException>()
                 .UntilNCalls(2);
 
             var service = affectedService.Instance;
 
             // Act && Assert
-            Assert.Throws<TestException>(() => service.GetIdList());
+            Assert.Throws<TestException>(() => service.GetItems());
 
-            var idList = service.GetIdList();
-            Assert.NotNull(idList);
-            Assert.Equal(4, idList.Count());
-            Assert.Equal(1, idList.First());
+            var items = service.GetItems();
+            Assert.NotNull(items);
+            Assert.Equal(3, items.Count());
+            Assert.Equal(1, items.First().Id);
         }
     }
 }
