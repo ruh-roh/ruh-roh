@@ -21,9 +21,12 @@ namespace RuhRoh
         /// <inheritdoc cref="IAffectedMethod.Name"/>
         public string Name => Method?.Name;
 
+        internal Expression OriginalExpression { get; set; }
         internal MethodInfo Method { get; set; }
-        internal ICollection<IAffector> Affectors { get; }
+        internal IReadOnlyCollection<Expression> Arguments { get; set; }
 
+        internal ICollection<IAffector> Affectors { get; }
+        
         IAffector IAffectedMethod.AddAffector(IAffector affector)
         {
             Affectors.Add(affector);
@@ -37,7 +40,7 @@ namespace RuhRoh
 
         internal IInterceptor GetInterceptor()
         {
-            return new AffectorInterceptor(Method, Affectors);
+            return new AffectorInterceptor(Method, Arguments, Affectors);
         }
     }
 
@@ -52,7 +55,6 @@ namespace RuhRoh
             Object = methodCall.Object;
         }
 
-        internal IReadOnlyCollection<Expression> Arguments { get; }
         internal Expression Object { get; }
     }
 
@@ -69,7 +71,5 @@ namespace RuhRoh
         }
 
         internal AffectedType<T> AffectedType { get; }
-        internal Expression OriginalExpression { get; }
-        internal IReadOnlyCollection<Expression> Arguments { get; }
     }
 }

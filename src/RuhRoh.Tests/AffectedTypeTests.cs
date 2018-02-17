@@ -257,5 +257,41 @@ namespace RuhRoh.Tests
             Assert.Equal(3, items.Count());
             Assert.Equal(1, items.First().Id);
         }
+
+        [Fact]
+        public void
+            Throw_Should_Throw_An_Exception_For_An_Interface_Based_Service_When_Calling_A_Method_With_Parameters()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
+            affectedService
+                .WhenCalling(x => x.GetItemById(1))
+                .Throw<TestException>();
+
+            var service = affectedService.Instance;
+
+            // Act && Assert
+            Assert.Throws<TestException>(() => service.GetItemById(1));
+        }
+
+        [Fact]
+        public void
+            Throw_Should_Not_Throw_An_Exception_For_An_Interface_Based_Service_When_Calling_A_Method_With_Parameters_When_Value_Doesnt_Match()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
+            affectedService
+                .WhenCalling(x => x.GetItemById(1))
+                .Throw<TestException>();
+
+            var service = affectedService.Instance;
+
+            // Act
+            var item = service.GetItemById(2);
+
+            // Assert
+            Assert.NotNull(item);
+            Assert.Equal(2, item.Id);
+        }
     }
 }

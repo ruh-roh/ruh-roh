@@ -16,13 +16,13 @@ namespace RuhRoh
         where T : class
     {
         private readonly Dictionary<string, IAffectedMethod> _affectedMethods = new Dictionary<string, IAffectedMethod>();
-        private Func<T> _factoryMethod;
+        private readonly Func<T> _factoryMethod;
 
         internal AffectedType() 
         {
             // When no factory method is given, generate a default one using Activator
             // This is not really intended to be used in the real world though.
-            _factoryMethod = () => Activator.CreateInstance<T>();
+            _factoryMethod = Activator.CreateInstance<T>;
         }
 
         internal AffectedType(Func<T> factoryMethod)
@@ -42,7 +42,6 @@ namespace RuhRoh
                 // TODO Move to constants/resx
                 throw new ArgumentException("invalid expression type");
             }
-            // throw if you can't override the method
 
             var affectedMethod = new AffectedMethod<T, TOut>(this, expression, mc.Method, mc.Arguments.ToArray());
             if (!_affectedMethods.TryGetValue(affectedMethod.Name, out var af2))
