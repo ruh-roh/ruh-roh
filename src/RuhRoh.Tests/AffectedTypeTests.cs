@@ -259,8 +259,7 @@ namespace RuhRoh.Tests
         }
 
         [Fact]
-        public void
-            Throw_Should_Throw_An_Exception_For_An_Interface_Based_Service_When_Calling_A_Method_With_Parameters()
+        public void Throw_Should_Throw_An_Exception_When_Calling_A_Method_With_Parameters_When_Value_Matches_Exactly()
         {
             // Arrange
             var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
@@ -275,8 +274,7 @@ namespace RuhRoh.Tests
         }
 
         [Fact]
-        public void
-            Throw_Should_Not_Throw_An_Exception_For_An_Interface_Based_Service_When_Calling_A_Method_With_Parameters_When_Value_Doesnt_Match()
+        public void Throw_Should_Not_Throw_An_Exception_When_Calling_A_Method_With_Parameters_When_Value_Doesnt_Match()
         {
             // Arrange
             var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
@@ -292,6 +290,36 @@ namespace RuhRoh.Tests
             // Assert
             Assert.NotNull(item);
             Assert.Equal(2, item.Id);
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(2)]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        public void Throw_Should_Throw_An_Exception_When_Calling_A_Method_With_Parameters_Configured_With_Any(int id)
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
+            affectedService
+                .WhenCalling(x => x.GetItemById(With.Any<int>()))
+                .Throw<TestException>();
+
+            var service = affectedService.Instance;
+
+            // Act
+            var item = service.GetItemById(id);
+
+            // Assert
+            if (id == 1 || id == 2)
+            {
+                Assert.NotNull(item);
+                Assert.Equal(id, item.Id);
+            }
+            else
+            {
+                Assert.Null(item);
+            }
         }
     }
 }

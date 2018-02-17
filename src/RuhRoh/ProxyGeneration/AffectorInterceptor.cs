@@ -84,8 +84,7 @@ namespace RuhRoh.ProxyGeneration
                 for (var i = 0; i < invocation.Arguments.Length; i++)
                 {
                     var invokedValue = invocation.Arguments[i];
-                    var definedValue = GetValueFromExpression(_arguments[i]);
-                    if (!Equals(invokedValue, definedValue))
+                    if (!ExpressionEquals(_arguments[i], invokedValue))
                     {
                         // Arguments at the same index mismatch => this method call should not be intercepted.
                         return false; 
@@ -96,16 +95,30 @@ namespace RuhRoh.ProxyGeneration
             return true;
         }
 
-        private object GetValueFromExpression(Expression e)
+        private bool ExpressionEquals(Expression expression, object value)
         {
-            switch (e)
+            switch (expression)
             {
                 case ConstantExpression c:
-                    return c.Value;
+                    return Equals(c.Value, value);
+                case MethodCallExpression call:
+                    return InvokeMethodCallExpression(call, value);
             }
 
             // TODO Move to resx
             throw new InvalidOperationException("Unsupported argument expression type");
+        }
+
+        private bool InvokeMethodCallExpression(MethodCallExpression call, object value)
+        {
+            if (call.Arguments.Count > 1)
+            {
+                // TODO Move to resx
+                throw new InvalidOperationException("Unsupported MethodCallExpression: only zero or one arguments are supported.");
+            }
+
+            var callReturnValue = call.Method.Invoke(call.Object, call.Arguments.Count == 0 ? null : new [] { value });
+            return Equals(callReturnValue, value);
         }
     }
 }
