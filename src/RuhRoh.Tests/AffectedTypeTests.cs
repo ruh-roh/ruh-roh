@@ -307,19 +307,8 @@ namespace RuhRoh.Tests
 
             var service = affectedService.Instance;
 
-            // Act
-            var item = service.GetItemById(id);
-
-            // Assert
-            if (id == 1 || id == 2)
-            {
-                Assert.NotNull(item);
-                Assert.Equal(id, item.Id);
-            }
-            else
-            {
-                Assert.Null(item);
-            }
+            // Act && Assert
+            Assert.Throws<TestException>(() => service.GetItemById(id));
         }
     }
 }

@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using Castle.DynamicProxy;
+using RuhRoh.ArgumentMatchers;
 
 namespace RuhRoh.ProxyGeneration
 {
@@ -13,13 +12,13 @@ namespace RuhRoh.ProxyGeneration
     internal class AffectorInterceptor : IInterceptor
     {
         private readonly MethodInfo _method;
-        private readonly Expression[] _arguments;
+        private readonly IArgumentMatcher[] _matchers;
         private readonly IAffector[] _affectors;
 
-        public AffectorInterceptor(MethodInfo method, IEnumerable<Expression> arguments, IEnumerable<IAffector> affectors)
+        public AffectorInterceptor(MethodInfo method, IEnumerable<IArgumentMatcher> matchers, IEnumerable<IAffector> affectors)
         {
             _method = method;
-            _arguments = arguments.ToArray();
+            _matchers = matchers.ToArray();
             _affectors = affectors.ToArray();
         }
 
@@ -79,13 +78,13 @@ namespace RuhRoh.ProxyGeneration
             // Don't intercept when the method has arguments that are different than the ones we were given
             // This allows users to configure different interceptors for different arguments (or allow methods
             // to pass through for certain argument values).
-            if (invocation.Arguments.Length > 0 && invocation.Arguments.Length == _arguments.Length)
+            if (invocation.Arguments.Length > 0 && invocation.Arguments.Length == _matchers.Length)
             {
                 for (var i = 0; i < invocation.Arguments.Length; i++)
                 {
                     var invokedValue = invocation.Arguments[i];
-                    if (!ExpressionEquals(_arguments[i], invokedValue))
-                    {
+					if (!_matchers[i].Matches(invokedValue)) 
+					{
                         // Arguments at the same index mismatch => this method call should not be intercepted.
                         return false; 
                     }
@@ -93,32 +92,6 @@ namespace RuhRoh.ProxyGeneration
             }
 
             return true;
-        }
-
-        private bool ExpressionEquals(Expression expression, object value)
-        {
-            switch (expression)
-            {
-                case ConstantExpression c:
-                    return Equals(c.Value, value);
-                case MethodCallExpression call:
-                    return InvokeMethodCallExpression(call, value);
-            }
-
-            // TODO Move to resx
-            throw new InvalidOperationException("Unsupported argument expression type");
-        }
-
-        private bool InvokeMethodCallExpression(MethodCallExpression call, object value)
-        {
-            if (call.Arguments.Count > 1)
-            {
-                // TODO Move to resx
-                throw new InvalidOperationException("Unsupported MethodCallExpression: only zero or one arguments are supported.");
-            }
-
-            var callReturnValue = call.Method.Invoke(call.Object, call.Arguments.Count == 0 ? null : new [] { value });
-            return Equals(callReturnValue, value);
         }
     }
 }

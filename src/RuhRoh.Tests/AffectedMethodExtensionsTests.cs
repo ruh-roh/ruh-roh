@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Linq.Expressions;
 using RuhRoh.Affectors;
 using RuhRoh.Tests.Services;
 using Xunit;
@@ -12,7 +13,10 @@ namespace RuhRoh.Tests
 
         private AffectedMethod<DummyService, int> GetAffectedMethod()
         {
-            return new AffectedMethod<DummyService, int>(_affectedType, null, null, null);
+	        Expression<Func<DummyService, int>> expression = x => x.RetrieveData();
+	        var mc = (MethodCallExpression)expression.Body;
+
+            return new AffectedMethod<DummyService, int>(_affectedType, expression, mc.Method, mc.Arguments.ToArray());
         }
 
         [Theory]

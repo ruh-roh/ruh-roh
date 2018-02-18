@@ -1,4 +1,6 @@
-﻿namespace RuhRoh
+﻿using System.Reflection;
+
+namespace RuhRoh
 {
     /// <summary>
     /// Utility class to configure argument matchers when configuring affected methods.
@@ -12,7 +14,10 @@
         /// <returns>The default value of <typeparamref name="T"/></returns>
         public static T Any<T>()
         {
-            return default;
+            return WithMatcher.Create(
+                x => x == null || typeof(T).IsAssignableFrom(x.GetType()),
+				() => Any<T>()
+            );
         }
     }
 }
