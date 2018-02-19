@@ -23,6 +23,51 @@ namespace RuhRoh.Tests
         }
 
         [Fact]
+        public void WhenCalling_Should_Return_The_Same_Affected_Method()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<DummyService>();
+
+            // Act
+            var affectedMethod1 = affectedService.WhenCalling(x => x.RetrieveData());
+            var affectedMethod2 = affectedService.WhenCalling(x => x.RetrieveData());
+
+            // Assert
+            Assert.Equal(affectedMethod1, affectedMethod2);
+            Assert.Equal(affectedMethod1.GetHashCode(), affectedMethod2.GetHashCode());
+        }
+
+        [Fact]
+        public void WhenCalling_Should_Return_A_Different_Affected_Method_When_Arguments_Differ()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
+
+            // Act
+            var affectedMethod1 = affectedService.WhenCalling(x => x.GetItemById(1));
+            var affectedMethod2 = affectedService.WhenCalling(x => x.GetItemById(2));
+
+            // Assert
+            Assert.NotEqual(affectedMethod1, affectedMethod2);
+            Assert.NotEqual(affectedMethod1.GetHashCode(), affectedMethod2.GetHashCode());
+        }
+
+        [Fact]
+        public void WhenCalling_Should_Return_A_Different_Affected_Method_When_Arguments_Differ_Using_With()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
+
+            // Act
+            var affectedMethod1 = affectedService.WhenCalling(x => x.GetItemById(1));
+            var affectedMethod2 = affectedService.WhenCalling(x => x.GetItemById(With.Any<int>()));
+
+            // Assert
+            Assert.NotEqual(affectedMethod1, affectedMethod2);
+            Assert.NotEqual(affectedMethod1.GetHashCode(), affectedMethod2.GetHashCode());
+        }
+
+        [Fact]
         public void ChaosEngine_Affect_Should_Return_An_Instance_When_Using_A_Custom_Factory_Method()
         {
             // Arrange

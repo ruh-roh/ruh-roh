@@ -5,9 +5,14 @@ using RuhRoh.ArgumentMatchers;
 
 namespace RuhRoh
 {
-    internal abstract class WithMatcher
+    internal abstract class WithMatcher : IEquatable<WithMatcher>
     {
-	    internal Expression ValueExpression { get; set; }
+        internal WithMatcher(Expression valueExpression)
+        {
+            ValueExpression = valueExpression;
+        }
+
+	    internal Expression ValueExpression { get; }
 	    public abstract bool Matches(object value);
 
         public static T Create<T>(Predicate<T> condition, Expression<Func<T>> valueExpression)
@@ -28,17 +33,37 @@ namespace RuhRoh
 			    MatchingContext.Current.LastMatcher = matcher;
 		    }
 	    }
-    }
 
-    internal class WithMatcher<T> : WithMatcher
-    {
-        public WithMatcher(Predicate<T> condition, Expression<Func<T>> valueExpression)
+        public bool Equals(WithMatcher other)
         {
-            Condition = condition;
-            ValueExpression = valueExpression.Body;
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Equals(ValueExpression, other.ValueExpression);
         }
 
-        internal Predicate<T> Condition { get; set; }
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((WithMatcher) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (ValueExpression != null ? ValueExpression.GetHashCode() : 0);
+        }
+    }
+
+    internal class WithMatcher<T> : WithMatcher, IEquatable<WithMatcher<T>>
+    {
+        public WithMatcher(Predicate<T> condition, Expression<Func<T>> valueExpression)
+            : base(valueExpression.Body)
+        {
+            Condition = condition;
+        }
+
+        internal Predicate<T> Condition { get; }
 
 	    public override bool Matches(object value)
 	    {
@@ -59,5 +84,28 @@ namespace RuhRoh
 
 		    return Condition((T) value);
 	    }
+
+        public bool Equals(WithMatcher<T> other)
+        {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return base.Equals(other) && Equals(Condition, other.Condition);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != GetType()) return false;
+            return Equals((WithMatcher<T>) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (base.GetHashCode() * 397) ^ (Condition != null ? Condition.GetHashCode() : 0);
+            }
+        }
     }
 }

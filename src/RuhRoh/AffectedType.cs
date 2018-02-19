@@ -15,7 +15,7 @@ namespace RuhRoh
     public class AffectedType<T>
         where T : class
     {
-        private readonly Dictionary<string, IAffectedMethod> _affectedMethods = new Dictionary<string, IAffectedMethod>();
+        private readonly Dictionary<int, IAffectedMethod> _affectedMethods = new Dictionary<int, IAffectedMethod>();
         private readonly Func<T> _factoryMethod;
 
         internal AffectedType() 
@@ -44,9 +44,10 @@ namespace RuhRoh
             }
 
             var affectedMethod = new AffectedMethod<T, TOut>(this, expression, mc.Method, mc.Arguments.ToArray());
-            if (!_affectedMethods.TryGetValue(affectedMethod.Name, out var af2))
+            var hc = affectedMethod.GetHashCode();
+            if (!_affectedMethods.TryGetValue(hc, out var af2))
             {
-                _affectedMethods.Add(affectedMethod.Name, affectedMethod);
+                _affectedMethods.Add(hc, affectedMethod);
             }
             else
             {

@@ -1,4 +1,6 @@
-﻿namespace RuhRoh.ArgumentMatchers
+﻿using System;
+
+namespace RuhRoh.ArgumentMatchers
 {
 	internal interface IArgumentMatcher
 	{
