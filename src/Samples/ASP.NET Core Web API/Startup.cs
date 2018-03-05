@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using RuhRoh.Samples.WebAPI.Data;
+using RuhRoh.Samples.WebAPI.Data.Services;
+using RuhRoh.Samples.WebAPI.Domain.Services;
 
 namespace RuhRoh.Samples.WebAPI
 {
@@ -26,6 +22,8 @@ namespace RuhRoh.Samples.WebAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<TodoDbContext>(x => x.UseSqlServer(Configuration.GetConnectionString("TodoDb")));
+            services.AddScoped<ITodoItemService, TodoItemService>();
+
             services.AddMvc();
         }
 
