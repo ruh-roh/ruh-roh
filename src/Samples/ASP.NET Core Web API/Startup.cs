@@ -32,6 +32,7 @@ namespace RuhRoh.Samples.WebAPI
         {
             if (env.IsDevelopment())
             {
+                app.UseDatabaseErrorPage();
                 app.UseDeveloperExceptionPage();
             }
 
