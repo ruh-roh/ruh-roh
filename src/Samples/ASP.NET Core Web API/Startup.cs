@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RuhRoh.Extensions.Microsoft.DependencyInjection;
 using RuhRoh.Samples.WebAPI.Data;
 using RuhRoh.Samples.WebAPI.Data.Services;
 using RuhRoh.Samples.WebAPI.Domain.Services;

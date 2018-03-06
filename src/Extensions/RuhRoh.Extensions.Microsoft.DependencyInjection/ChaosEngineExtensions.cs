@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using RuhRoh.Extensions.Microsoft.DependencyInjection;
 
-// ReSharper disable once CheckNamespace
-namespace RuhRoh
+namespace RuhRoh.Extensions.Microsoft.DependencyInjection
 {
     /// <summary>
     /// Extension method class to get started when configuring services to affect at runtime.
