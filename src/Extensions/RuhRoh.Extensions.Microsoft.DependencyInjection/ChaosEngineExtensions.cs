@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using RuhRoh.Extensions.Microsoft.DependencyInjection;
@@ -11,6 +13,8 @@ namespace RuhRoh
     /// </summary>
     public static class ChaosEngineExtensions
     {
+        private static readonly Dictionary<Type, object> AffectedServices = new Dictionary<Type, object>();
+
         /// <summary>
         /// Register a service and affect its behavior.
         /// </summary>
@@ -22,25 +26,27 @@ namespace RuhRoh
             where TImplementation : class, TService
         {
             var typeToAffect = typeof(TService);
+            if (AffectedServices.ContainsKey(typeToAffect))
+            {
+                return (AffectedType<TService>) AffectedServices[typeToAffect];
+            }
             
             // Create a new AffectedType<T> (or AffectedService because we need dependency injection)
             var affectedType = new AffectedService<TService, TImplementation>();
+            AffectedServices.Add(typeToAffect, affectedType);
 
-            var registration =
-                services.FirstOrDefault(x => x.ServiceType == typeToAffect && x.ImplementationType == typeof(TImplementation));
-            
+            var registration = services.FirstOrDefault(x => x.ServiceType == typeToAffect && x.ImplementationType == typeof(TImplementation));
             if (registration == null)
             {
                 services.AddScoped(sp => affectedType.GetInstance(sp));
             }
             else
             {
-                services.Replace(
-                    new ServiceDescriptor(typeToAffect, sp => affectedType.GetInstance(sp), ServiceLifetime.Scoped));
+                services.Replace(new ServiceDescriptor(typeToAffect, sp => affectedType.GetInstance(sp), ServiceLifetime.Scoped));
             }
 
             // Register the implementation of TService, we need to be able to resolve it in the AffectedService.
-            services.AddScoped<TImplementation>();
+            services.TryAddScoped<TImplementation>();
 
             return affectedType;
         }
