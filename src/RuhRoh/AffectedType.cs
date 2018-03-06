@@ -61,9 +61,9 @@ namespace RuhRoh
         /// <summary>
         /// Retrieves an instance of the configured service.
         /// </summary>
-        public T Instance => BuildInstance();
+        public T Instance => BuildInstance(_factoryMethod);
 
-        private T BuildInstance()
+        internal T BuildInstance(Func<T> factoryMethod)
         {
             var proxyGen = new ProxyGenerator();
             var interceptors = new List<IInterceptor>();
@@ -78,13 +78,13 @@ namespace RuhRoh
             if (typeof(T).GetTypeInfo().IsInterface)
             {
                 return proxyGen.CreateInterfaceProxyWithTarget(
-                    _factoryMethod(),
+                    factoryMethod(),
                     proxyGenOptions,
                     interceptors.ToArray());
             }
 
             return proxyGen.CreateClassProxyWithTarget(
-                _factoryMethod(), 
+                factoryMethod(), 
                 proxyGenOptions, 
                 interceptors.ToArray());
         }

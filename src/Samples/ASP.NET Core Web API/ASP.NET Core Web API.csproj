@@ -29,7 +29,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\RuhRoh\RuhRoh.csproj" />
+    <ProjectReference Include="..\..\Extensions\RuhRoh.Extensions.Microsoft.DependencyInjection\RuhRoh.Extensions.Microsoft.DependencyInjection.csproj" />
   </ItemGroup>
 
 </Project>
