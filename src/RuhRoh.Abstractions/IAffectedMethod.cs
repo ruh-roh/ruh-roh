@@ -18,6 +18,5 @@
         /// <param name="affector"></param>
         /// <param name="trigger"></param>
         void AddTrigger(IAffector affector, ITrigger trigger);
-
     }
 }

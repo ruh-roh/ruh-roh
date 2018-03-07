@@ -3,7 +3,7 @@ using RuhRoh.Affectors.Internal;
 
 namespace RuhRoh.Affectors
 {
-    internal class ExceptionThrower : AffectorBase
+    internal class ExceptionThrower : Affector
     {
         private readonly Exception _exception;
 
@@ -12,7 +12,7 @@ namespace RuhRoh.Affectors
             _exception = exception;
         }
 
-        public sealed override void Affect()
+        protected internal sealed override void Affect()
         {
             throw _exception;
         }

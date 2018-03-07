@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using RuhRoh.Affectors;
+using RuhRoh.Affectors.Internal;
 using RuhRoh.Triggers;
 using RuhRoh.Triggers.Internal;
 
@@ -19,7 +20,7 @@ namespace RuhRoh
         /// <param name="affectedMethod">The method to affect.</param>
         /// <param name="time">A <see cref="TimeSpan"/> value indicating the amount of time used to slow down the call.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="time"/> equals zero or a negative amount of time.</exception>
-        public static IAffector SlowItDownBy(this IAffectedMethod affectedMethod, TimeSpan time)
+        public static Affector SlowItDownBy(this IAffectedMethod affectedMethod, TimeSpan time)
         {
             if (time.Ticks <= 0)
             {
@@ -27,7 +28,7 @@ namespace RuhRoh
                 throw new ArgumentOutOfRangeException(); // we can't speed up things
             }
 
-            return affectedMethod.AddAffector(new Delayer(time));
+            return (Affector)affectedMethod.AddAffector(new Delayer(time));
         }
 
         /// <summary>
@@ -36,7 +37,7 @@ namespace RuhRoh
         /// <typeparam name="TException">A reference type derived from <see cref="Exception"/>.</typeparam>
         /// <param name="affectedMethod">The method to affect.</param>
         /// <exception cref="ArgumentException">Thrown when <typeparamref name="TException"/> is not referring to a reference type based on <see cref="Exception"/>.</exception>
-        public static IAffector Throw<TException>(this IAffectedMethod affectedMethod)
+        public static Affector Throw<TException>(this IAffectedMethod affectedMethod)
             where TException : Exception
         {
             return Throw(affectedMethod, typeof(TException));
@@ -49,7 +50,7 @@ namespace RuhRoh
         /// <param name="exceptionType">A <see cref="Type"/> of <see cref="Exception"/> that should be thrown.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="exceptionType"/> is a null reference.</exception>
         /// <exception cref="ArgumentException">Thrown when <paramref name="exceptionType"/> is not referring to a reference type based on <see cref="Exception"/>.</exception>
-        public static IAffector Throw(this IAffectedMethod affectedMethod, Type exceptionType)
+        public static Affector Throw(this IAffectedMethod affectedMethod, Type exceptionType)
         {
             if (exceptionType == null)
             {
@@ -73,14 +74,14 @@ namespace RuhRoh
         /// <param name="affectedMethod">The method to affect.</param>
         /// <param name="exception">The <see cref="Exception"/> that should be thrown.</param>
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="exception"/> is a null reference.</exception>
-        public static IAffector Throw(this IAffectedMethod affectedMethod, Exception exception)
+        public static Affector Throw(this IAffectedMethod affectedMethod, Exception exception)
         {
             if (exception == null)
             {
                 throw new ArgumentNullException(nameof(exception));
             }
 
-            return affectedMethod.AddAffector(new ExceptionThrower(exception));
+            return (Affector)affectedMethod.AddAffector(new ExceptionThrower(exception));
         }
 
         // Triggers
@@ -89,9 +90,9 @@ namespace RuhRoh
         /// Alters the behavior of the configured affector to trigger at random.
         /// </summary>
         /// <param name="affector">The configured affector</param>
-        public static IAffector AtRandom(this IAffector affector)
+        public static Affector AtRandom(this Affector affector)
         {
-            affector.AddTrigger(new RandomTrigger());
+            ((IAffector)affector).AddTrigger(new RandomTrigger());
             return affector;
         }
 
@@ -100,9 +101,9 @@ namespace RuhRoh
         /// </summary>
         /// <param name="affector">The configured affector</param>
         /// <param name="moment">Absolute point in time after which this trigger will become active.</param>
-        public static IAffector After(this IAffector affector, DateTime moment)
+        public static Affector After(this Affector affector, DateTime moment)
         {
-            affector.AddTrigger(new TimedTrigger(moment, TimedOperation.After));
+            ((IAffector)affector).AddTrigger(new TimedTrigger(moment, TimedOperation.After));
             return affector;
         }
 
@@ -111,9 +112,9 @@ namespace RuhRoh
         /// </summary>
         /// <param name="affector">The configured affector</param>
         /// <param name="moment">Absolute point in time before which this trigger will be active.</param>
-        public static IAffector Before(this IAffector affector, DateTime moment)
+        public static Affector Before(this Affector affector, DateTime moment)
         {
-            affector.AddTrigger(new TimedTrigger(moment, TimedOperation.Before));
+            ((IAffector)affector).AddTrigger(new TimedTrigger(moment, TimedOperation.Before));
             return affector;
         }
 
@@ -123,9 +124,9 @@ namespace RuhRoh
         /// <param name="affector">The configured affector</param>
         /// <param name="from">Absolute point in time after which this trigger will become active.</param>
         /// <param name="until">Absolute point in time after which this trigger will become inactive again.</param>
-        public static IAffector Between(this IAffector affector, DateTime from, DateTime until)
+        public static Affector Between(this Affector affector, DateTime from, DateTime until)
         {
-            affector.AddTrigger(new TimedTrigger(from, until));
+            ((IAffector)affector).AddTrigger(new TimedTrigger(from, until));
             return affector;
         }
 
@@ -134,9 +135,9 @@ namespace RuhRoh
         /// </summary>
         /// <param name="affector">The configured affector</param>
         /// <param name="calls">The amount of calls after which the trigger becomes active.</param>
-        public static IAffector AfterNCalls(this IAffector affector, int calls)
+        public static Affector AfterNCalls(this Affector affector, int calls)
         {
-            affector.AddTrigger(new TimesCalledTrigger(TimesCalledOperation.After, calls));
+            ((IAffector)affector).AddTrigger(new TimesCalledTrigger(TimesCalledOperation.After, calls));
             return affector;
         }
 
@@ -145,9 +146,9 @@ namespace RuhRoh
         /// </summary>
         /// <param name="affector">The configured affector</param>
         /// <param name="calls">The amount of calls when the trigger is active. After this amount of calls, the trigger becomes inactive.</param>
-        public static IAffector UntilNCalls(this IAffector affector, int calls)
+        public static Affector UntilNCalls(this Affector affector, int calls)
         {
-            affector.AddTrigger(new TimesCalledTrigger(TimesCalledOperation.Until, calls));
+            ((IAffector)affector).AddTrigger(new TimesCalledTrigger(TimesCalledOperation.Until, calls));
             return affector;
         }
 
@@ -156,9 +157,9 @@ namespace RuhRoh
         /// </summary>
         /// <param name="affector">The configured affector</param>
         /// <param name="calls">The amount of calls needed to activate the trigger once.</param>
-        public static IAffector WhenCalledNTimes(this IAffector affector, int calls)
+        public static Affector WhenCalledNTimes(this Affector affector, int calls)
         {
-            affector.AddTrigger(new TimesCalledTrigger(TimesCalledOperation.At, calls));
+            ((IAffector)affector).AddTrigger(new TimesCalledTrigger(TimesCalledOperation.At, calls));
             return affector;
         }
 
@@ -168,9 +169,9 @@ namespace RuhRoh
         /// <param name="affector">The configured affector</param>
         /// TODO Might need better wording.
         /// <param name="calls">The amount of calls needed between calls to activate the trigger.</param>
-        public static IAffector EveryNCalls(this IAffector affector, int calls)
+        public static Affector EveryNCalls(this Affector affector, int calls)
         {
-            affector.AddTrigger(new TimesCalledTrigger(TimesCalledOperation.EveryXCalls, calls));
+            ((IAffector)affector).AddTrigger(new TimesCalledTrigger(TimesCalledOperation.EveryXCalls, calls));
             return affector;
         }
     }
