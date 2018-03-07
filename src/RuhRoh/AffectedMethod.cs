@@ -27,9 +27,6 @@ namespace RuhRoh
             InitializeArgumentMatchers(arguments);
         }
 
-        /// <inheritdoc cref="IAffectedMethod.Name"/>
-        public string Name => Method?.Name;
-
         internal Expression OriginalExpression { get; }
         internal MethodInfo Method { get; }
         internal IReadOnlyCollection<IArgumentMatcher> ArgumentMatchers => _argumentMatchers;

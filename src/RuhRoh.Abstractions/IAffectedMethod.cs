@@ -6,11 +6,6 @@
     public interface IAffectedMethod
     {
         /// <summary>
-        /// The name of the affected method.
-        /// </summary>
-        string Name { get; }
-
-        /// <summary>
         /// Adds an <see cref="IAffector"/> to this method.
         /// </summary>
         /// <param name="affector"></param>
