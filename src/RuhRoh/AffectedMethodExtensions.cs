@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using RuhRoh.Affectors;
-using RuhRoh.Affectors.Internal;
 using RuhRoh.Triggers;
 using RuhRoh.Triggers.Internal;
 

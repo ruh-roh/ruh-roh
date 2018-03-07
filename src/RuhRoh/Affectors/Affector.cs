@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace RuhRoh.Affectors.Internal
+namespace RuhRoh.Affectors
 {
     /// <summary>
     /// Base class for affectors

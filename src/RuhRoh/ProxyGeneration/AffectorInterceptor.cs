@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using Castle.DynamicProxy;
+using RuhRoh.Affectors;
 using RuhRoh.ArgumentMatchers;
 
 namespace RuhRoh.ProxyGeneration

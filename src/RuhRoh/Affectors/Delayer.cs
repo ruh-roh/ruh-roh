@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using RuhRoh.Affectors.Internal;
 
 namespace RuhRoh.Affectors
 {

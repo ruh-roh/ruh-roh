@@ -1,4 +1,6 @@
-﻿namespace RuhRoh
+﻿using RuhRoh.Affectors;
+
+namespace RuhRoh
 {
     /// <summary>
     /// Represents an affected method of a service. During runtime, the behavior of the affected method might change because of this.

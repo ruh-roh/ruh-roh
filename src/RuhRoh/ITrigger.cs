@@ -1,4 +1,6 @@
-﻿namespace RuhRoh
+﻿using RuhRoh.Affectors;
+
+namespace RuhRoh
 {
     /// <summary>
     /// Defines a trigger. A trigger can enable or disable the <see cref="IAffector"/> on which the trigger has been configured.

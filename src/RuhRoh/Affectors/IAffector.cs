@@ -1,4 +1,4 @@
-﻿namespace RuhRoh
+﻿namespace RuhRoh.Affectors
 {
     /// <summary>
     /// Defines an affector. An affector changes the behavior of a configured call.
