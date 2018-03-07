@@ -5,11 +5,11 @@ namespace RuhRoh.Triggers
 {
     internal class TimedTrigger : ITrigger
     {
-        private readonly DateTime _when;
-        private readonly DateTime _end;
+        private readonly TimeSpan _when;
+        private readonly TimeSpan _end;
         private readonly TimedOperation _operation;
 
-        internal TimedTrigger(DateTime when, TimedOperation operation)
+        internal TimedTrigger(TimeSpan when, TimedOperation operation)
         {
             if (operation == TimedOperation.Between)
             {
@@ -20,7 +20,7 @@ namespace RuhRoh.Triggers
             _operation = operation;
         }
 
-        public TimedTrigger(DateTime from, DateTime until)
+        public TimedTrigger(TimeSpan from, TimeSpan until)
         {
             if (from > until)
             {
@@ -35,14 +35,16 @@ namespace RuhRoh.Triggers
 
         bool ITrigger.WillAffect()
         {
+            var now = DateTime.Now.TimeOfDay;
+
             switch (_operation)
             {
                 case TimedOperation.After:
-                    return DateTime.Now > _when;
+                    return now > _when;
                 case TimedOperation.Before:
-                    return DateTime.Now < _when;
+                    return now < _when;
                 case TimedOperation.Between:
-                    return _when <= DateTime.Now && DateTime.Now <= _end;
+                    return _when <= now && now <= _end;
             }
 
             return false;

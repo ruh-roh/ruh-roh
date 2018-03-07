@@ -100,7 +100,7 @@ namespace RuhRoh
         /// </summary>
         /// <param name="affector">The configured affector</param>
         /// <param name="moment">Absolute point in time after which this trigger will become active.</param>
-        public static Affector After(this Affector affector, DateTime moment)
+        public static Affector After(this Affector affector, TimeSpan moment)
         {
             ((IAffector)affector).AddTrigger(new TimedTrigger(moment, TimedOperation.After));
             return affector;
@@ -111,7 +111,7 @@ namespace RuhRoh
         /// </summary>
         /// <param name="affector">The configured affector</param>
         /// <param name="moment">Absolute point in time before which this trigger will be active.</param>
-        public static Affector Before(this Affector affector, DateTime moment)
+        public static Affector Before(this Affector affector, TimeSpan moment)
         {
             ((IAffector)affector).AddTrigger(new TimedTrigger(moment, TimedOperation.Before));
             return affector;
@@ -123,7 +123,7 @@ namespace RuhRoh
         /// <param name="affector">The configured affector</param>
         /// <param name="from">Absolute point in time after which this trigger will become active.</param>
         /// <param name="until">Absolute point in time after which this trigger will become inactive again.</param>
-        public static Affector Between(this Affector affector, DateTime from, DateTime until)
+        public static Affector Between(this Affector affector, TimeSpan from, TimeSpan until)
         {
             ((IAffector)affector).AddTrigger(new TimedTrigger(from, until));
             return affector;
