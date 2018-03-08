@@ -165,5 +165,16 @@ namespace RuhRoh.Tests
             Assert.Single(((IAffector)affector).Triggers);
             Assert.IsType<TimedTrigger>(((IAffector)affector).Triggers.First());
         }
+
+        [Fact]
+        public void PlannedAt_Should_Add_An_AgendaTrigger()
+        {
+            var affector = GetAffector();
+
+            affector.PlannedAt(DateTimeOffset.Now, TimeSpan.FromMinutes(30));
+
+            Assert.Single(((IAffector)affector).Triggers);
+            Assert.IsType<AgendaTrigger>(((IAffector)affector).Triggers.First());
+        }
     }
 }

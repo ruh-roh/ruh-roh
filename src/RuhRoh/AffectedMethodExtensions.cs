@@ -88,7 +88,7 @@ namespace RuhRoh
         /// <summary>
         /// Alters the behavior of the configured affector to trigger at random.
         /// </summary>
-        /// <param name="affector">The configured affector</param>
+        /// <param name="affector">The configured affector.</param>
         public static Affector AtRandom(this Affector affector)
         {
             ((IAffector)affector).AddTrigger(new RandomTrigger());
@@ -98,7 +98,7 @@ namespace RuhRoh
         /// <summary>
         /// Alters the behavior of the configured affector to trigger after the given <paramref name="moment"/> in time.
         /// </summary>
-        /// <param name="affector">The configured affector</param>
+        /// <param name="affector">The configured affector.</param>
         /// <param name="moment">Absolute point in time after which this trigger will become active.</param>
         public static Affector After(this Affector affector, TimeSpan moment)
         {
@@ -109,7 +109,7 @@ namespace RuhRoh
         /// <summary>
         /// Alters the behavior of the configured affector to trigger before the given <paramref name="moment"/> in time.
         /// </summary>
-        /// <param name="affector">The configured affector</param>
+        /// <param name="affector">The configured affector.</param>
         /// <param name="moment">Absolute point in time before which this trigger will be active.</param>
         public static Affector Before(this Affector affector, TimeSpan moment)
         {
@@ -120,7 +120,7 @@ namespace RuhRoh
         /// <summary>
         /// Alters the behavior of the configured affector to trigger between <paramref name="from"/> and <paramref name="until"/>.
         /// </summary>
-        /// <param name="affector">The configured affector</param>
+        /// <param name="affector">The configured affector.</param>
         /// <param name="from">Absolute point in time after which this trigger will become active.</param>
         /// <param name="until">Absolute point in time after which this trigger will become inactive again.</param>
         public static Affector Between(this Affector affector, TimeSpan from, TimeSpan until)
@@ -132,7 +132,7 @@ namespace RuhRoh
         /// <summary>
         /// Alters the behavior of the configured affector to trigger after the affected method has been called N times.
         /// </summary>
-        /// <param name="affector">The configured affector</param>
+        /// <param name="affector">The configured affector.</param>
         /// <param name="calls">The amount of calls after which the trigger becomes active.</param>
         public static Affector AfterNCalls(this Affector affector, int calls)
         {
@@ -143,7 +143,7 @@ namespace RuhRoh
         /// <summary>
         /// Alters the behavior of the configured affector to trigger until the affected method has been called N times.
         /// </summary>
-        /// <param name="affector">The configured affector</param>
+        /// <param name="affector">The configured affector.</param>
         /// <param name="calls">The amount of calls when the trigger is active. After this amount of calls, the trigger becomes inactive.</param>
         public static Affector UntilNCalls(this Affector affector, int calls)
         {
@@ -154,7 +154,7 @@ namespace RuhRoh
         /// <summary>
         /// Alters the behavior of the configured affector to trigger when the affected method is being called for the N-th time.
         /// </summary>
-        /// <param name="affector">The configured affector</param>
+        /// <param name="affector">The configured affector.</param>
         /// <param name="calls">The amount of calls needed to activate the trigger once.</param>
         public static Affector WhenCalledNTimes(this Affector affector, int calls)
         {
@@ -165,12 +165,24 @@ namespace RuhRoh
         /// <summary>
         /// Alters the behavior of the configured affector to trigger every time the affected method has been called N times.
         /// </summary>
-        /// <param name="affector">The configured affector</param>
+        /// <param name="affector">The configured affector.</param>
         /// TODO Might need better wording.
         /// <param name="calls">The amount of calls needed between calls to activate the trigger.</param>
         public static Affector EveryNCalls(this Affector affector, int calls)
         {
             ((IAffector)affector).AddTrigger(new TimesCalledTrigger(TimesCalledOperation.EveryXCalls, calls));
+            return affector;
+        }
+
+        /// <summary>
+        /// Alters the behavior of the configured affector to trigger in a time slot as defined by the <paramref name="moment"/> and <paramref name="duration"/>.
+        /// </summary>
+        /// <param name="affector">The configured affector.</param>
+        /// <param name="moment">A <see cref="DateTimeOffset"/> indicating the start time of the time slot.</param>
+        /// <param name="duration">A <see cref="TimeSpan"/> indicating the length of the time slot.</param>
+        public static Affector PlannedAt(this Affector affector, DateTimeOffset moment, TimeSpan duration)
+        {
+            ((IAffector)affector).AddTrigger(new AgendaTrigger(moment, duration));
             return affector;
         }
     }

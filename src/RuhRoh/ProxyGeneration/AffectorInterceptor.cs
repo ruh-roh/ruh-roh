@@ -33,11 +33,9 @@ namespace RuhRoh.ProxyGeneration
 
             if (_affectors?.Length > 0)
             {
-                // Get all triggers for all affectors that are updateable
-                var updateableTriggers = _affectors.SelectMany(x => x.Triggers).OfType<IUpdatableTrigger>();
-                foreach (var trigger in updateableTriggers)
+                foreach (var updatableTrigger in _affectors.SelectMany(x => x.Triggers).OfType<IUpdatableTrigger>())
                 {
-                    trigger.Update(); // Some triggers require updating to check if they need to trigger
+                    updatableTrigger.Update();
                 }
 
                 // For each affector (exception thrower, delayer, ...)
@@ -46,10 +44,13 @@ namespace RuhRoh.ProxyGeneration
                     var triggers = affector.Triggers; // Get the triggers configured on this affector, if any
                     if (triggers?.Length > 0)
                     {
-                        // If any of the triggers would affect the call in their current state, execute the attached affector
-                        if (triggers.Any(x => x.WillAffect()))
+                        foreach (var trigger in triggers)
                         {
-                            affector.Affect();
+                            if (trigger.WillAffect())
+                            {
+                                affector.Affect();
+                                break;
+                            }
                         }
                     }
                     else
