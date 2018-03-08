@@ -143,5 +143,16 @@ namespace RuhRoh.Tests
 
             Assert.False(result);
         }
+
+        [Fact]
+        public void Affect_Should_Return_False_When_An_Invalid_Operation_Has_Been_Used()
+        {
+            var t = new TimesCalledTrigger((TimesCalledOperation)9999, 1);
+            t.ActualTimesCalled = 1000;
+
+            var result = ((ITrigger)t).WillAffect();
+
+            Assert.False(result);
+        }
     }
 }
