@@ -11,7 +11,7 @@ namespace RuhRoh.Tests
         [InlineData(5)]
         [InlineData(6)]
         [InlineData(99)]
-        [InlineData(123409287)]
+        [InlineData(123_409_287)]
         public void After_Should_Affect_When_Actually_After(int timesCalled)
         {
             var t = new TimesCalledTrigger(TimesCalledOperation.After, 3);
@@ -51,7 +51,7 @@ namespace RuhRoh.Tests
         [InlineData(3)]
         [InlineData(4)]
         [InlineData(99)]
-        [InlineData(123409287)]
+        [InlineData(123_409_287)]
         public void Until_Should_Not_Affect_When_After(int timesCalled)
         {
             var t = new TimesCalledTrigger(TimesCalledOperation.Until, 3);
