@@ -8,7 +8,13 @@ namespace RuhRoh.Tests
     public class TimedTriggerTests
     {
         [Fact]
-        public void Timed_Should_Affect_When_Time_Is_After_With_After_Operation()
+        public void Should_Throw_ArgumentException_When_Operation_Is_Between_With_Only_One_TimeSpan()
+        {
+            Assert.Throws<ArgumentException>(() => new TimedTrigger(DateTime.Now.TimeOfDay, TimedOperation.Between));
+        }
+
+        [Fact]
+        public void Should_Affect_When_Time_Is_After_With_After_Operation()
         {
             ITrigger t = new TimedTrigger(DateTime.Now.AddHours(-1).TimeOfDay, TimedOperation.After);
 
@@ -18,7 +24,7 @@ namespace RuhRoh.Tests
         }
 
         [Fact]
-        public void Timed_Should_Not_Affect_When_Time_Is_Before_With_After_Operation()
+        public void Should_Not_Affect_When_Time_Is_Before_With_After_Operation()
         {
             ITrigger t = new TimedTrigger(DateTime.Now.AddHours(1).TimeOfDay, TimedOperation.After);
 
@@ -28,7 +34,7 @@ namespace RuhRoh.Tests
         }
 
         [Fact]
-        public void Timed_Should_Only_Affect_When_Time_Is_Before_With_Before_Operation()
+        public void Should_Only_Affect_When_Time_Is_Before_With_Before_Operation()
         {
             ITrigger t = new TimedTrigger(DateTime.Now.AddHours(1).TimeOfDay, TimedOperation.Before);
 
@@ -38,7 +44,7 @@ namespace RuhRoh.Tests
         }
 
         [Fact]
-        public void Timed_Should_Not_Affect_When_Time_Is_After_With_Before_Operation()
+        public void Should_Not_Affect_When_Time_Is_After_With_Before_Operation()
         {
             ITrigger t = new TimedTrigger(DateTime.Now.AddHours(-1).TimeOfDay, TimedOperation.Before);
 
@@ -48,7 +54,7 @@ namespace RuhRoh.Tests
         }
 
         [Fact]
-        public void Timed_Should_Affect_When_Time_Is_Between()
+        public void Should_Affect_When_Time_Is_Between()
         {
             ITrigger t = new TimedTrigger(DateTime.Now.AddHours(-1).TimeOfDay, DateTime.Now.AddHours(1).TimeOfDay);
 
@@ -58,7 +64,7 @@ namespace RuhRoh.Tests
         }
 
         [Fact]
-        public void Timed_Should_Not_Affect_When_Time_Is_Not_Between()
+        public void Should_Not_Affect_When_Time_Is_Not_Between()
         {
             ITrigger t = new TimedTrigger(DateTime.Now.AddHours(1).TimeOfDay, DateTime.Now.AddHours(2).TimeOfDay);
 
@@ -68,9 +74,19 @@ namespace RuhRoh.Tests
         }
 
         [Fact]
-        public void Timed_Should_Throw_An_Exception_When_Until_Is_Before_From_When_Using_Between()
+        public void Should_Throw_An_Exception_When_Until_Is_Before_From_When_Using_Between()
         {
             Assert.Throws<ArgumentException>(() => new TimedTrigger(DateTime.Now.AddHours(1).TimeOfDay, DateTime.Now.AddHours(-1).TimeOfDay));
+        }
+
+        [Fact]
+        public void WillAffect_Should_Return_False_If_An_Invalid_TimedOperation_Has_Been_Used()
+        {
+            ITrigger t = new TimedTrigger(DateTime.Now.AddHours(1).TimeOfDay, operation: 0);
+
+            var result = t.WillAffect();
+
+            Assert.False(result);
         }
     }
 }
