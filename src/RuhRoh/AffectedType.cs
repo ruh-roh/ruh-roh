@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using Castle.DynamicProxy;
 using RuhRoh.ProxyGeneration;
 
@@ -14,9 +15,20 @@ namespace RuhRoh
     public class AffectedType<T>
         where T : class
     {
-        private readonly Dictionary<string, IAffectedMethod> _affectedMethods = new Dictionary<string, IAffectedMethod>();
+        private readonly Dictionary<int, IAffectedMethod> _affectedMethods = new Dictionary<int, IAffectedMethod>();
+        private readonly Func<T> _factoryMethod;
 
-        internal AffectedType() { }
+        internal AffectedType() 
+        {
+            // When no factory method is given, generate a default one using Activator
+            // This is not really intended to be used in the real world though.
+            _factoryMethod = Activator.CreateInstance<T>;
+        }
+
+        internal AffectedType(Func<T> factoryMethod)
+        {
+            _factoryMethod = factoryMethod;
+        }
 
         /// <summary>
         /// Configures the method defined by <paramref name="expression"/>.
@@ -30,12 +42,12 @@ namespace RuhRoh
                 // TODO Move to constants/resx
                 throw new ArgumentException("invalid expression type");
             }
-            // throw if you can't override the method
 
             var affectedMethod = new AffectedMethod<T, TOut>(this, expression, mc.Method, mc.Arguments.ToArray());
-            if (!_affectedMethods.TryGetValue(affectedMethod.Name, out var af2))
+            var hc = affectedMethod.GetHashCode();
+            if (!_affectedMethods.TryGetValue(hc, out var af2))
             {
-                _affectedMethods.Add(affectedMethod.Name, affectedMethod);
+                _affectedMethods.Add(hc, affectedMethod);
             }
             else
             {
@@ -49,9 +61,9 @@ namespace RuhRoh
         /// <summary>
         /// Retrieves an instance of the configured service.
         /// </summary>
-        public T Instance => BuildInstance();
+        public T Instance => BuildInstance(_factoryMethod);
 
-        private T BuildInstance()
+        internal T BuildInstance(Func<T> factoryMethod)
         {
             var proxyGen = new ProxyGenerator();
             var interceptors = new List<IInterceptor>();
@@ -61,8 +73,19 @@ namespace RuhRoh
                 interceptors.Add(((AffectedMethod)affectedMethod).GetInterceptor());
             }
 
-            return proxyGen.CreateClassProxy<T>(
-                new ProxyGenerationOptions(new AffectorProxyGenerationHook()),
+            var proxyGenOptions = new ProxyGenerationOptions(new AffectorProxyGenerationHook());
+            
+            if (typeof(T).GetTypeInfo().IsInterface)
+            {
+                return proxyGen.CreateInterfaceProxyWithTarget(
+                    factoryMethod(),
+                    proxyGenOptions,
+                    interceptors.ToArray());
+            }
+
+            return proxyGen.CreateClassProxyWithTarget(
+                factoryMethod(), 
+                proxyGenOptions, 
                 interceptors.ToArray());
         }
     }

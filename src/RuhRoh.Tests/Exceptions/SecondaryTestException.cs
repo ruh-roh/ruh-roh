@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RuhRoh.Core.Tests.Exceptions
+namespace RuhRoh.Tests.Exceptions
 {
     public class SecondaryTestException : Exception
     {

@@ -1,4 +1,4 @@
-﻿namespace RuhRoh
+﻿namespace RuhRoh.Affectors
 {
     /// <summary>
     /// Defines an affector. An affector changes the behavior of a configured call.
@@ -6,19 +6,19 @@
     public interface IAffector
     {
         /// <summary>
-        /// Execute the affector
+        /// Return the <see cref="ITrigger"/>'s that have been added to this affector.
         /// </summary>
-        void Affect();
+        ITrigger[] Triggers { get; }
 
         /// <summary>
         /// Add an <see cref="ITrigger"/> to this affector.
         /// </summary>
         /// <param name="trigger">The trigger.</param>
         void AddTrigger(ITrigger trigger);
-
+        
         /// <summary>
-        /// Return the <see cref="ITrigger"/>'s that have been added to this <see cref="IAffector"/>.
+        /// Execute the affector
         /// </summary>
-        ITrigger[] Triggers { get; }
+        void Affect();
     }
 }

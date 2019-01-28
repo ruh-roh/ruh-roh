@@ -1,4 +1,6 @@
-﻿namespace RuhRoh
+﻿using RuhRoh.Affectors;
+
+namespace RuhRoh
 {
     /// <summary>
     /// Defines a trigger. A trigger can enable or disable the <see cref="IAffector"/> on which the trigger has been configured.
@@ -12,9 +14,9 @@
     }
 
     /// <summary>
-    /// Defines an updatable trigger.
+    /// Defines an updateable trigger.
     /// </summary>
-    public interface IUpdatableTrigger : ITrigger
+    public interface IUpdateableTrigger : ITrigger
     {
         /// <summary>
         /// Update the state of the trigger when calling the affected method.

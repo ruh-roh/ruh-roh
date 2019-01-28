@@ -1,10 +1,11 @@
 ﻿using System;
-using RuhRoh.Core.Tests.Exceptions;
+using RuhRoh.Tests.Exceptions;
 using Xunit;
-using RuhRoh.Core.Tests.Services;
+using RuhRoh.Tests.Services;
 using Xunit.Sdk;
+using System.Linq;
 
-namespace RuhRoh.Core.Tests
+namespace RuhRoh.Tests
 {
     public class AffectedTypeTests
     {
@@ -13,6 +14,77 @@ namespace RuhRoh.Core.Tests
         {
             // Arrange
             var affectedService = ChaosEngine.Affect<DummyService>();
+
+            // Act
+            var service = affectedService.Instance;
+
+            // Assert
+            Assert.NotNull(service);
+        }
+
+        [Fact]
+        public void WhenCalling_Should_Return_The_Same_Affected_Method()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<DummyService>();
+
+            // Act
+            var affectedMethod1 = affectedService.WhenCalling(x => x.RetrieveData());
+            var affectedMethod2 = affectedService.WhenCalling(x => x.RetrieveData());
+
+            // Assert
+            Assert.Equal(affectedMethod1, affectedMethod2);
+            Assert.Equal(affectedMethod1.GetHashCode(), affectedMethod2.GetHashCode());
+        }
+
+        [Fact]
+        public void WhenCalling_Should_Return_A_Different_Affected_Method_When_Arguments_Differ()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
+
+            // Act
+            var affectedMethod1 = affectedService.WhenCalling(x => x.GetItemById(1));
+            var affectedMethod2 = affectedService.WhenCalling(x => x.GetItemById(2));
+
+            // Assert
+            Assert.NotEqual(affectedMethod1, affectedMethod2);
+            Assert.NotEqual(affectedMethod1.GetHashCode(), affectedMethod2.GetHashCode());
+        }
+
+        [Fact]
+        public void WhenCalling_Should_Return_A_Different_Affected_Method_When_Arguments_Differ_Using_With()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
+
+            // Act
+            var affectedMethod1 = affectedService.WhenCalling(x => x.GetItemById(1));
+            var affectedMethod2 = affectedService.WhenCalling(x => x.GetItemById(With.Any<int>()));
+
+            // Assert
+            Assert.NotEqual(affectedMethod1, affectedMethod2);
+            Assert.NotEqual(affectedMethod1.GetHashCode(), affectedMethod2.GetHashCode());
+        }
+
+        [Fact]
+        public void ChaosEngine_Affect_Should_Return_An_Instance_When_Using_A_Custom_Factory_Method()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect(() => new DummyService());
+
+            // Act
+            var service = affectedService.Instance;
+
+            // Assert
+            Assert.NotNull(service);
+        }
+
+        [Fact]
+        public void ChaosEngine_Affect_Should_Return_An_Instance_When_Using_A_Custom_Factory_Method_For_An_Interface()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
 
             // Act
             var service = affectedService.Instance;
@@ -193,6 +265,95 @@ namespace RuhRoh.Core.Tests
 
             Assert.Throws<SecondaryTestException>(() => service.RetrieveData()); // fourth and next calls should throw a different exception
             Assert.Throws<SecondaryTestException>(() => service.RetrieveData());
+        }
+
+        [Fact]
+        public void Throw_Should_Throw_An_Exception_For_An_Interface_Based_Service()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
+            affectedService
+                .WhenCalling(x => x.GetItems())
+                .Throw<TestException>();
+
+            var service = affectedService.Instance;
+
+            // Act && Assert
+            Assert.Throws<TestException>(() => service.GetItems());
+        }
+
+        [Fact]
+        public void Throw_Should_Throw_An_Exception_For_An_Interface_Based_Service_Only_Once()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
+            affectedService
+                .WhenCalling(x => x.GetItems())
+                .Throw<TestException>()
+                .UntilNCalls(2);
+
+            var service = affectedService.Instance;
+
+            // Act && Assert
+            Assert.Throws<TestException>(() => service.GetItems());
+
+            var items = service.GetItems();
+            Assert.NotNull(items);
+            Assert.Equal(3, items.Count());
+            Assert.Equal(1, items.First().Id);
+        }
+
+        [Fact]
+        public void Throw_Should_Throw_An_Exception_When_Calling_A_Method_With_Parameters_When_Value_Matches_Exactly()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
+            affectedService
+                .WhenCalling(x => x.GetItemById(1))
+                .Throw<TestException>();
+
+            var service = affectedService.Instance;
+
+            // Act && Assert
+            Assert.Throws<TestException>(() => service.GetItemById(1));
+        }
+
+        [Fact]
+        public void Throw_Should_Not_Throw_An_Exception_When_Calling_A_Method_With_Parameters_When_Value_Doesnt_Match()
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
+            affectedService
+                .WhenCalling(x => x.GetItemById(1))
+                .Throw<TestException>();
+
+            var service = affectedService.Instance;
+
+            // Act
+            var item = service.GetItemById(2);
+
+            // Assert
+            Assert.NotNull(item);
+            Assert.Equal(2, item.Id);
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(2)]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        public void Throw_Should_Throw_An_Exception_When_Calling_A_Method_With_Parameters_Configured_With_Any(int id)
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
+            affectedService
+                .WhenCalling(x => x.GetItemById(With.Any<int>()))
+                .Throw<TestException>();
+
+            var service = affectedService.Instance;
+
+            // Act && Assert
+            Assert.Throws<TestException>(() => service.GetItemById(id));
         }
     }
 }

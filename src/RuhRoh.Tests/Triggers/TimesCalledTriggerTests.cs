@@ -2,7 +2,7 @@
 using RuhRoh.Triggers.Internal;
 using Xunit;
 
-namespace RuhRoh.Tests
+namespace RuhRoh.Tests.Triggers
 {
     public class TimesCalledTriggerTests
     {
@@ -11,7 +11,7 @@ namespace RuhRoh.Tests
         [InlineData(5)]
         [InlineData(6)]
         [InlineData(99)]
-        [InlineData(123409287)]
+        [InlineData(123_409_287)]
         public void After_Should_Affect_When_Actually_After(int timesCalled)
         {
             var t = new TimesCalledTrigger(TimesCalledOperation.After, 3);
@@ -51,7 +51,7 @@ namespace RuhRoh.Tests
         [InlineData(3)]
         [InlineData(4)]
         [InlineData(99)]
-        [InlineData(123409287)]
+        [InlineData(123_409_287)]
         public void Until_Should_Not_Affect_When_After(int timesCalled)
         {
             var t = new TimesCalledTrigger(TimesCalledOperation.Until, 3);
@@ -139,6 +139,17 @@ namespace RuhRoh.Tests
             var t = new TimesCalledTrigger(TimesCalledOperation.EveryXCalls, 3);
 
             t.ActualTimesCalled = timesCalled;
+            var result = ((ITrigger)t).WillAffect();
+
+            Assert.False(result);
+        }
+
+        [Fact]
+        public void Affect_Should_Return_False_When_An_Invalid_Operation_Has_Been_Used()
+        {
+            var t = new TimesCalledTrigger((TimesCalledOperation)9999, 1);
+            t.ActualTimesCalled = 1000;
+
             var result = ((ITrigger)t).WillAffect();
 
             Assert.False(result);
