@@ -1,10 +1,10 @@
-﻿namespace RuhRoh.Core.Tests
+﻿namespace RuhRoh.Tests
 {
     class Program
     {
-        //static void Main(string[] args)
-        //{
-            
-        //}
+        static void Main(string[] args)
+        {
+
+        }
     }
 }

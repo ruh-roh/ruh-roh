@@ -1,10 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Summary>Extensions for configuring Ruh Roh in conjunction with Microsoft.Extensions.DependencyInjection</Summary>
     <Description>A chaos testing library for .NET. Ruh Roh allows you to reconfigure your dependencies (like an HTTP service) in order to simulate service outages, slow network connections, and so on. This can help to improve your software and allows for testing these - and more! - scenarios without having to actually affect other live services.</Description>
     <Authors>wcabus</Authors>
-    <TargetFramework>netstandard1.3</TargetFramework>
+    <TargetFrameworks>netstandard2.0;netstandard1.3</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <RootNamespace>RuhRoh.Extensions.Microsoft.DependencyInjection</RootNamespace>
@@ -21,8 +21,12 @@
     <InformationalVersion>0.1.0</InformationalVersion>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.1.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.*" />
   </ItemGroup>
 
   <ItemGroup>

@@ -2,7 +2,7 @@
 using RuhRoh.Triggers.Internal;
 using Xunit;
 
-namespace RuhRoh.Tests
+namespace RuhRoh.Tests.Triggers
 {
     public class RandomTriggerTests
     {

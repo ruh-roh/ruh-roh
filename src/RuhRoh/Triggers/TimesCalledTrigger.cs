@@ -2,7 +2,7 @@
 
 namespace RuhRoh.Triggers
 {
-    internal class TimesCalledTrigger : IUpdatableTrigger
+    internal class TimesCalledTrigger : IUpdateableTrigger
     {
         private readonly TimesCalledOperation _operation;
         private readonly int _trigger;
@@ -37,7 +37,7 @@ namespace RuhRoh.Triggers
             return false;
         }
 
-        void IUpdatableTrigger.Update()
+        void IUpdateableTrigger.Update()
         {
             ActualTimesCalled++;
         }

@@ -14,9 +14,9 @@ namespace RuhRoh
     }
 
     /// <summary>
-    /// Defines an updatable trigger.
+    /// Defines an updateable trigger.
     /// </summary>
-    public interface IUpdatableTrigger : ITrigger
+    public interface IUpdateableTrigger : ITrigger
     {
         /// <summary>
         /// Update the state of the trigger when calling the affected method.

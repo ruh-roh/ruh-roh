@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,13 +21,13 @@ namespace RuhRoh.Samples.WebAPI
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<TodoDbContext>(x => x.UseSqlServer(Configuration.GetConnectionString("TodoDb")));
             services.AddScoped<ITodoItemService, TodoItemService>();
 
-            services.AddMvc();
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             ConfigureRuhRoh(services);
         }
@@ -42,9 +43,16 @@ namespace RuhRoh.Samples.WebAPI
                 .WhenCalling(x => x.AddNewTodoItem(With.Any<string>()))
                 .Throw<Exception>()
                 .AtRandom();
+
+            services.AffectScoped<ITodoItemService, TodoItemService>()
+                .WhenCalling(x => x.GetTodoItem(With.Any<Guid>()))
+                .Throw<Exception>()
+                .EveryNCalls(3)
+                .And
+                // During 5 minutes after running, every third call should fail
+                .PlannedAt(new DateTimeOffset(DateTime.Now.AddMinutes(-40)), TimeSpan.FromMinutes(45));
         }
         
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())

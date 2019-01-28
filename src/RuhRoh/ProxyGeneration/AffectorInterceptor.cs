@@ -33,7 +33,7 @@ namespace RuhRoh.ProxyGeneration
 
             if (_affectors?.Length > 0)
             {
-                foreach (var updatableTrigger in _affectors.SelectMany(x => x.Triggers).OfType<IUpdatableTrigger>())
+                foreach (var updatableTrigger in _affectors.SelectMany(x => x.Triggers).OfType<IUpdateableTrigger>())
                 {
                     updatableTrigger.Update();
                 }

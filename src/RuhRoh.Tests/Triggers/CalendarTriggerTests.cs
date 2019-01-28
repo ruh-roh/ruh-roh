@@ -2,7 +2,7 @@
 using System;
 using Xunit;
 
-namespace RuhRoh.Tests
+namespace RuhRoh.Tests.Triggers
 {
     public class AgendaTriggerTests
     {

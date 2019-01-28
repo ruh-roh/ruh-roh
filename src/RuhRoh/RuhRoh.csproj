@@ -4,7 +4,7 @@
     <Summary>A chaos testing library for .NET</Summary>
     <Description>A chaos testing library for .NET. Ruh Roh allows you to reconfigure your dependencies (like an HTTP service) in order to simulate service outages, slow network connections, and so on. This can help to improve your software and allows for testing these - and more! - scenarios without having to actually affect other live services.</Description>
     <Authors>wcabus</Authors>
-    <TargetFramework>netstandard1.3</TargetFramework>
+    <TargetFrameworks>netstandard2.0;netstandard1.3</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>RuhRoh</AssemblyName>
@@ -20,9 +20,13 @@
     <InformationalVersion>0.1.0</InformationalVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Castle.Core" Version="4.2.1" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
     <PackageReference Include="System.Reflection" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.TypeExtensions" Version="4.5.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Castle.Core" Version="4.3.1" />
   </ItemGroup>
 
 </Project>
