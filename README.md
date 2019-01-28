@@ -8,3 +8,5 @@ For example: when developing, that external API always responds in time, but in 
 Another example: you have to process files to disk and want to simulate how your application would deal with the situation when the disk is full. Ruh Roh allows you to do this by throwing exceptions like System.IO.IOException, again when you want it to (every time, the n-th time, after n calls, between certain times, ...)
 
 Ruh Roh is still in development however, so stay tuned for the first release!
+
+This project uses [GitHub flow](https://guides.github.com/introduction/flow/).
