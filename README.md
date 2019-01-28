@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/aosahbwe991w7wlt/branch/develop?svg=true)](https://ci.appveyor.com/project/wcabus/ruh-roh-ld4gh/branch/develop)
+[![Build Status](https://gotsharp.visualstudio.com/Ruh-Roh/_apis/build/status/Ruh-Roh-CI?branchName=master)](https://gotsharp.visualstudio.com/Ruh-Roh/_build/latest?definitionId=5?branchName=master)
 
 # Ruh Roh
 Ruh Roh is what you call a chaos monkey. You can use it to test your application under certain circumstances where everything that can go wrong, will go wrong, things often difficult to test otherwhise.
