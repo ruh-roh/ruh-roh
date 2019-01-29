@@ -7,6 +7,8 @@
     <TargetFrameworks>netstandard2.0;netstandard1.3</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DebugType>Full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
     <RootNamespace>RuhRoh.Extensions.Microsoft.DependencyInjection</RootNamespace>
     <AssemblyName>RuhRoh.Extensions.Microsoft.DependencyInjection</AssemblyName>
     <PackageId>RuhRoh.Extensions.Microsoft.DependencyInjection</PackageId>

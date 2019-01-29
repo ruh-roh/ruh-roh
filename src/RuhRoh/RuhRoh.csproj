@@ -7,6 +7,8 @@
     <TargetFrameworks>netstandard2.0;netstandard1.3</TargetFrameworks>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DebugType>Full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
     <AssemblyName>RuhRoh</AssemblyName>
     <PackageId>RuhRoh</PackageId>
     <PackageProjectUrl>https://github.com/ruh-roh/ruh-roh</PackageProjectUrl>
