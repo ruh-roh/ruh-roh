@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using RuhRoh.Tests.Models;
 
 namespace RuhRoh.Tests.Services
@@ -7,5 +8,7 @@ namespace RuhRoh.Tests.Services
     {
         IEnumerable<TestItem> GetItems();
         TestItem GetItemById(int id);
+
+        Task<TestItem> GetItemByIdAsync(int id);
     }
 }

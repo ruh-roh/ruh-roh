@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using RuhRoh.Tests.Models;
 
 namespace RuhRoh.Tests.Services
@@ -30,6 +31,11 @@ namespace RuhRoh.Tests.Services
         public TestItem GetItemById(int id)
         {
             return _data.FirstOrDefault(x => x.Id == id);
+        }
+
+        public Task<TestItem> GetItemByIdAsync(int id)
+        {
+            return Task.FromResult(_data.FirstOrDefault(x => x.Id == id));
         }
     }
 }

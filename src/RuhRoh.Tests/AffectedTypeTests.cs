@@ -5,6 +5,7 @@ using RuhRoh.Tests.Services;
 using Xunit.Sdk;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace RuhRoh.Tests
 {
@@ -383,6 +384,27 @@ namespace RuhRoh.Tests
         [InlineData(2)]
         [InlineData(int.MinValue)]
         [InlineData(int.MaxValue)]
+        public async Task Returns_Should_Change_The_Return_Value_To_Null_Async(int id)
+        {
+            // Arrange
+            var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
+            affectedService.WhenCalling(x => x.GetItemByIdAsync(With.Any<int>()))
+                .ReturnsNullAsync<Models.TestItem>();
+
+            var service = affectedService.Instance;
+
+            // Act
+            var item = await service.GetItemByIdAsync(id);
+
+            // Assert
+            Assert.Null(item);
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(2)]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
         public void Returns_Should_Change_The_Return_Value_To_A_Fixed_Value(int id)
         {
             // Arrange
@@ -401,6 +423,34 @@ namespace RuhRoh.Tests
 
             // Act
             var item = service.GetItemById(id);
+
+            // Assert
+            Assert.Equal(fixedItem, item);
+        }
+
+        [Theory]
+        [InlineData(1)]
+        [InlineData(2)]
+        [InlineData(int.MinValue)]
+        [InlineData(int.MaxValue)]
+        public async Task Returns_Should_Change_The_Return_Value_To_A_Fixed_Value_Async(int id)
+        {
+            // Arrange
+            var fixedItem = new Models.TestItem
+            {
+                Id = -1,
+                TextField1 = "Chaos was here",
+                TextField2 = "039rujifoern0gh824n0g892h4"
+            };
+
+            var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
+            affectedService.WhenCalling(x => x.GetItemByIdAsync(With.Any<int>()))
+                .ReturnsAsync(fixedItem);
+
+            var service = affectedService.Instance;
+
+            // Act
+            var item = await service.GetItemByIdAsync(id);
 
             // Assert
             Assert.Equal(fixedItem, item);
@@ -427,6 +477,34 @@ namespace RuhRoh.Tests
             // Act
             var item1 = service.GetItemById(1);
             var item2 = service.GetItemById(2);
+
+            // Assert
+            Assert.Equal(-1, item1.Id);
+            Assert.Equal(-1, item2.Id);
+            Assert.NotEqual(item1.TextField2, item2.TextField2);
+        }
+
+        [Fact]
+        public async Task Returns_Should_Change_The_Return_Value_To_A_Dynamic_Value_Async()
+        {
+            // Arrange
+            var rnd = new Random();
+            Expression<Func<Models.TestItem>> itemExpression = () => new Models.TestItem
+            {
+                Id = -1,
+                TextField1 = "Chaos was here",
+                TextField2 = rnd.Next().ToString()
+            };
+
+            var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
+            affectedService.WhenCalling(x => x.GetItemByIdAsync(With.Any<int>()))
+                .ReturnsAsync(itemExpression);
+
+            var service = affectedService.Instance;
+
+            // Act
+            var item1 = await service.GetItemByIdAsync(1);
+            var item2 = await service.GetItemByIdAsync(2);
 
             // Assert
             Assert.Equal(-1, item1.Id);

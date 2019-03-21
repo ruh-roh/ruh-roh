@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RuhRoh.Extensions.Microsoft.DependencyInjection;
 using RuhRoh.Samples.WebAPI.Data;
 using RuhRoh.Samples.WebAPI.Data.Services;
+using RuhRoh.Samples.WebAPI.Domain;
 using RuhRoh.Samples.WebAPI.Domain.Services;
 
 namespace RuhRoh.Samples.WebAPI
@@ -43,6 +45,16 @@ namespace RuhRoh.Samples.WebAPI
                 .WhenCalling(x => x.AddNewTodoItem(With.Any<string>()))
                 .Throw<Exception>()
                 .AtRandom();
+
+            services.AffectScoped<ITodoItemService, TodoItemService>()
+                .WhenCalling(x => x.GetTodoItem(With.Any<Guid>()))
+                .ReturnsAsync(() => new TodoItem
+                {
+                    Id = Guid.NewGuid(),
+                    Completed = false,
+                    Description = "This is not the todo item you're looking for..."
+                })
+                .EveryNCalls(2);
 
             services.AffectScoped<ITodoItemService, TodoItemService>()
                 .WhenCalling(x => x.GetTodoItem(With.Any<Guid>()))
