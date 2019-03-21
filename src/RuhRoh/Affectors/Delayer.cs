@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Castle.DynamicProxy;
+using System;
 using System.Threading.Tasks;
 
 namespace RuhRoh.Affectors
@@ -12,7 +13,7 @@ namespace RuhRoh.Affectors
             _delay = delay;
         }
 
-        protected internal sealed override void Affect()
+        protected internal sealed override void Affect(IInvocation invocation)
         {
             Task.Delay(_delay).GetAwaiter().GetResult();
         }

@@ -1,4 +1,6 @@
-﻿namespace RuhRoh.Affectors
+﻿using Castle.DynamicProxy;
+
+namespace RuhRoh.Affectors
 {
     /// <summary>
     /// Defines an affector. An affector changes the behavior of a configured call.
@@ -19,6 +21,11 @@
         /// <summary>
         /// Execute the affector
         /// </summary>
-        void Affect();
+        void Affect(IInvocation invocation);
+
+        /// <summary>
+        /// Indicates if the affector runs before the affected method is executed.
+        /// </summary>
+        bool RunsBeforeMethodExecution { get; }
     }
 }

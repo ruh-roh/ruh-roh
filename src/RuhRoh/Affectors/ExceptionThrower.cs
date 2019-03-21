@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Castle.DynamicProxy;
+using System;
 
 namespace RuhRoh.Affectors
 {
@@ -11,7 +12,7 @@ namespace RuhRoh.Affectors
             _exception = exception;
         }
 
-        protected internal override void Affect()
+        protected internal override void Affect(IInvocation invocation)
         {
             throw _exception;
         }

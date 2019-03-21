@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using System.Reflection;
 using RuhRoh.Affectors;
 using RuhRoh.Triggers;
@@ -82,6 +83,38 @@ namespace RuhRoh
 
             return (Affector)affectedMethod.AddAffector(new ExceptionThrower(exception));
         }
+
+        /// <summary>
+        /// Changes the return value of the <paramref name="affectedMethod"/> to <c>null</c>.
+        /// </summary>
+        /// <param name="affectedMethod">The method to affect.</param>
+        public static Affector ReturnsNull(this IAffectedMethod affectedMethod)
+        {
+            return (Affector)affectedMethod.AddAffector(new ReturnValueChanger<object>(() => null));
+        }
+
+        /// <summary>
+        /// Changes the return value of the <paramref name="affectedMethod"/> to <paramref name="value"/>.
+        /// </summary>
+        /// <typeparam name="T">Type of the return value.</typeparam>
+        /// <param name="affectedMethod">The method to affect.</param>
+        /// <param name="value">The value that should be returned after calling the <paramref name="affectedMethod"/>.</param>
+        public static Affector Returns<T>(this IAffectedMethod affectedMethod, T value)
+        {
+            return (Affector)affectedMethod.AddAffector(new ReturnValueChanger<T>(() => value));
+        }
+
+        /// <summary>
+        /// Changes the return value of the <paramref name="affectedMethod"/> to the value returned by the <paramref name="valueExpression"/>.
+        /// </summary>
+        /// <typeparam name="T">Type of the return value.</typeparam>
+        /// <param name="affectedMethod">The method to affect.</param>
+        /// <param name="valueExpression">Expression that generates the value that should be returned after calling the <paramref name="affectedMethod"/>.</param>
+        public static Affector Returns<T>(this IAffectedMethod affectedMethod, Expression<Func<T>> valueExpression)
+        {
+            return (Affector)affectedMethod.AddAffector(new ReturnValueChanger<T>(valueExpression));
+        }
+        
 
         // Triggers
 

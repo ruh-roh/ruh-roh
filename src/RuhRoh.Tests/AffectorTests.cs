@@ -1,4 +1,6 @@
 ﻿using System;
+using Castle.DynamicProxy;
+using FakeItEasy;
 using RuhRoh.Affectors;
 using RuhRoh.Triggers;
 using RuhRoh.Triggers.Internal;
@@ -9,6 +11,8 @@ namespace RuhRoh.Tests
 {
     public class AffectorTests
     {
+        private IInvocation _invocation = null;
+
         [Theory]
         [InlineData(1)]
         [InlineData(2)]
@@ -18,7 +22,7 @@ namespace RuhRoh.Tests
             var affector = new Delayer(TimeSpan.FromSeconds(seconds));
 
             var t = new ExecutionTimer();
-            t.Aggregate(() => affector.Affect());
+            t.Aggregate(() => affector.Affect(_invocation));
 
             Assert.InRange(t.Total, seconds - 1, seconds + 1);
         }
@@ -29,8 +33,48 @@ namespace RuhRoh.Tests
             var exception = new InvalidOperationException();
             var affector = new ExceptionThrower(exception);
 
-            var e = Assert.Throws<InvalidOperationException>(() => affector.Affect());
+            var e = Assert.Throws<InvalidOperationException>(() => affector.Affect(_invocation));
             Assert.Equal(e, exception);
+        }
+
+        [Fact]
+        public void ReturnValueChanger_Should_Change_The_Return_Value()
+        {
+            var initialValue = 100;
+            var changedValue = 9001; // It should be over 9000
+
+            _invocation = A.Fake<IInvocation>();
+            _invocation.ReturnValue = initialValue;
+
+            var affector = new ReturnValueChanger<int>(() => changedValue);
+
+            affector.Affect(_invocation);
+
+            Assert.Equal(changedValue, (int)_invocation.ReturnValue);
+        }
+
+        [Fact]
+        public void Delayer_Should_Run_Before_Method_Invocation()
+        {
+            var affector = new Delayer(TimeSpan.FromSeconds(10));
+
+            Assert.True(affector.RunsBeforeMethodExecution);
+        }
+
+        [Fact]
+        public void ExceptionThrower_Should_Run_Before_Method_Invocation()
+        {
+            var affector = new ExceptionThrower(new Exception());
+
+            Assert.True(affector.RunsBeforeMethodExecution);
+        }
+
+        [Fact]
+        public void ReturnValueChanger_Should_Run_After_Method_Invocation()
+        {
+            var affector = new ReturnValueChanger<int>(() => 1);
+
+            Assert.False(affector.RunsBeforeMethodExecution);
         }
 
         [Fact]

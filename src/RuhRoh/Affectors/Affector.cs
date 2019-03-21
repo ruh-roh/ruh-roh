@@ -1,4 +1,5 @@
-﻿using RuhRoh.Triggers;
+﻿using Castle.DynamicProxy;
+using RuhRoh.Triggers;
 using RuhRoh.Triggers.Internal;
 using System;
 using System.Collections.Generic;
@@ -86,15 +87,24 @@ namespace RuhRoh.Affectors
             _triggers.Add(trigger);
         }
 
-        void IAffector.Affect()
+        void IAffector.Affect(IInvocation invocation)
         {
-            Affect();
+            Affect(invocation);
         }
+
+        bool IAffector.RunsBeforeMethodExecution => RunsBeforeMethodExecution;
 
         /// <summary>
         /// Execute the affector
         /// </summary>
-        protected internal abstract void Affect();
+        /// <param name="invocation">The affected method invocation. Only needed if the affector runs after the method is invoked for now.</param>
+        protected internal abstract void Affect(IInvocation invocation);
+
+        /// <summary>
+        /// Indicates if the affector runs before the affected method is executed.
+        /// Defaults to <c>true</c>.
+        /// </summary>
+        protected internal virtual bool RunsBeforeMethodExecution => true;
 
         private void PrepareCombinedTrigger(Logical operation)
         {
