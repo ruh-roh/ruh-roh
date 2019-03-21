@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Castle.DynamicProxy;
@@ -15,12 +16,18 @@ namespace RuhRoh.ProxyGeneration
         private readonly MethodInfo _method;
         private readonly IArgumentMatcher[] _matchers;
         private readonly IAffector[] _affectors;
+        private readonly IAffector[] _delayedAffectors;
 
         public AffectorInterceptor(MethodInfo method, IEnumerable<IArgumentMatcher> matchers, IEnumerable<IAffector> affectors)
         {
             _method = method;
             _matchers = matchers.ToArray();
             _affectors = affectors.ToArray();
+
+            // Let's reserve an array the size of the original one.
+            // It can't be larger, but probably won't contain as much affectors as well, 
+            // might need to revise this later...
+            _delayedAffectors = new IAffector[_affectors.Length];
         }
 
         public void Intercept(IInvocation invocation)
@@ -30,6 +37,9 @@ namespace RuhRoh.ProxyGeneration
                 invocation.Proceed();
                 return;
             }
+
+            Array.Clear(_delayedAffectors, 0, _delayedAffectors.Length);
+            var i = 0;
 
             if (_affectors?.Length > 0)
             {
@@ -48,7 +58,15 @@ namespace RuhRoh.ProxyGeneration
                         {
                             if (trigger.WillAffect())
                             {
-                                affector.Affect();
+                                if (affector.RunsBeforeMethodExecution)
+                                {
+                                    affector.Affect(invocation);
+                                }
+                                else
+                                {
+                                    _delayedAffectors[i++] = affector;
+                                }
+                                
                                 break;
                             }
                         }
@@ -56,13 +74,30 @@ namespace RuhRoh.ProxyGeneration
                     else
                     {
                         // No triggers? Then the affector will affect the call every time
-                        affector.Affect();
+                        if (affector.RunsBeforeMethodExecution)
+                        {
+                            affector.Affect(invocation);
+                        }
+                        else
+                        {
+                            _delayedAffectors[i++] = affector;
+                        }
                     }
                 }
             }
 
             // Allow the call to proceed
             invocation.Proceed();
+
+            if (i == 0) {
+                return;
+            }
+
+            // We have delayed some affectors because they need the method to be run first.
+            while (i-- > 0)
+            {
+                _delayedAffectors[i].Affect(invocation);
+            }
         }
 
         /// <summary>

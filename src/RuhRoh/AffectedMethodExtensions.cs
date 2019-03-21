@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq.Expressions;
 using System.Reflection;
+using System.Threading.Tasks;
 using RuhRoh.Affectors;
 using RuhRoh.Triggers;
 using RuhRoh.Triggers.Internal;
@@ -11,6 +13,13 @@ namespace RuhRoh
     /// </summary>
     public static class AffectedMethodExtensions
     {
+        private readonly static MethodInfo _taskFromResultMethod;
+
+        static AffectedMethodExtensions()
+        {
+            _taskFromResultMethod = typeof(Task).GetTypeInfo().GetDeclaredMethod("FromResult");
+        }
+
         // Affectors
 
         /// <summary>
@@ -82,6 +91,75 @@ namespace RuhRoh
 
             return (Affector)affectedMethod.AddAffector(new ExceptionThrower(exception));
         }
+
+        /// <summary>
+        /// Changes the return value of the <paramref name="affectedMethod"/> to <c>null</c>.
+        /// </summary>
+        /// <param name="affectedMethod">The method to affect.</param>
+        public static Affector ReturnsNull(this IAffectedMethod affectedMethod)
+        {
+            return (Affector)affectedMethod.AddAffector(new ReturnValueChanger<object>(() => null));
+        }
+
+        /// <summary>
+        /// Changes the return value of the <paramref name="affectedMethod"/> to <c>null</c>.
+        /// </summary>
+        /// <param name="affectedMethod">The method to affect.</param>
+        public static Affector ReturnsNullAsync<T>(this IAffectedMethod affectedMethod) where T : class
+        {
+            return (Affector)affectedMethod.AddAffector(new ReturnValueChanger<Task<T>>(() => Task.FromResult<T>(null)));
+        }
+
+        /// <summary>
+        /// Changes the return value of the <paramref name="affectedMethod"/> to <paramref name="value"/>.
+        /// </summary>
+        /// <typeparam name="T">Type of the return value.</typeparam>
+        /// <param name="affectedMethod">The method to affect.</param>
+        /// <param name="value">The value that should be returned after calling the <paramref name="affectedMethod"/>.</param>
+        public static Affector Returns<T>(this IAffectedMethod affectedMethod, T value)
+        {
+            return (Affector)affectedMethod.AddAffector(new ReturnValueChanger<T>(() => value));
+        }
+
+        /// <summary>
+        /// Changes the return value of the <paramref name="affectedMethod"/> to <paramref name="value"/>.
+        /// </summary>
+        /// <typeparam name="T">Type of the return value.</typeparam>
+        /// <param name="affectedMethod">The method to affect.</param>
+        /// <param name="value">The value that should be returned after calling the <paramref name="affectedMethod"/>.</param>
+        public static Affector ReturnsAsync<T>(this IAffectedMethod affectedMethod, T value)
+        {
+            return (Affector)affectedMethod.AddAffector(new ReturnValueChanger<Task<T>>(() => Task.FromResult(value)));
+        }
+
+        /// <summary>
+        /// Changes the return value of the <paramref name="affectedMethod"/> to the value returned by the <paramref name="valueExpression"/>.
+        /// </summary>
+        /// <typeparam name="T">Type of the return value.</typeparam>
+        /// <param name="affectedMethod">The method to affect.</param>
+        /// <param name="valueExpression">Expression that generates the value that should be returned after calling the <paramref name="affectedMethod"/>.</param>
+        public static Affector Returns<T>(this IAffectedMethod affectedMethod, Expression<Func<T>> valueExpression)
+        {
+            return (Affector)affectedMethod.AddAffector(new ReturnValueChanger<T>(valueExpression));
+        }
+
+        /// <summary>
+        /// Changes the return value of the <paramref name="affectedMethod"/> to the value returned by the <paramref name="valueExpression"/>.<br/>
+        /// Use this rather than <see cref="Returns{T}(IAffectedMethod, Expression{Func{T}})"/> when affecting a method that returns a <see cref="Task{TResult}"/>.
+        /// </summary>
+        /// <typeparam name="T">Type of the return value.</typeparam>
+        /// <param name="affectedMethod">The method to affect.</param>
+        /// <param name="valueExpression">Expression that generates the value that should be returned after calling the <paramref name="affectedMethod"/>.</param>
+        public static Affector ReturnsAsync<T>(this IAffectedMethod affectedMethod, Expression<Func<T>> valueExpression)
+        {
+            var taskOfTMethod = _taskFromResultMethod.MakeGenericMethod(typeof(T));
+            var invokeExpression = Expression.Invoke(valueExpression);
+            var callTaskFromResult = Expression.Call(taskOfTMethod, invokeExpression);
+            var taskExpression = Expression.Lambda<Func<Task<T>>>(callTaskFromResult);
+            
+            return (Affector)affectedMethod.AddAffector(new ReturnValueChanger<Task<T>>(taskExpression));
+        }
+
 
         // Triggers
 
