@@ -160,6 +160,29 @@ namespace RuhRoh
             return (Affector)affectedMethod.AddAffector(new ReturnValueChanger<Task<T>>(taskExpression));
         }
 
+        /// <summary>
+        /// Changes the return value of the <paramref name="affectedMethod"/> to the value returned by the <paramref name="valueExpression"/>.
+        /// </summary>
+        /// <typeparam name="T">Type of the return value.</typeparam>
+        /// <param name="affectedMethod">The method to affect.</param>
+        /// <param name="valueExpression">Expression that generates the value that should be returned after calling the <paramref name="affectedMethod"/>.</param>
+        public static Affector Returns<T>(this IAffectedMethod affectedMethod, Expression<Func<T, T>> valueExpression)
+        {
+            return (Affector)affectedMethod.AddAffector(new ReturnValueChangerWithContext<T>(valueExpression));
+        }
+
+        /// <summary>
+        /// Changes the return value of the <paramref name="affectedMethod"/> to the value returned by the <paramref name="valueExpression"/>.<br/>
+        /// Use this rather than <see cref="Returns{T}(IAffectedMethod, Expression{Func{T}})"/> when affecting a method that returns a <see cref="Task{TResult}"/>.
+        /// </summary>
+        /// <typeparam name="T">Type of the return value.</typeparam>
+        /// <param name="affectedMethod">The method to affect.</param>
+        /// <param name="valueExpression">Expression that generates the value that should be returned after calling the <paramref name="affectedMethod"/>.</param>
+        public static Affector ReturnsAsync<T>(this IAffectedMethod affectedMethod, Expression<Func<Task<T>, Task<T>>> valueExpression)
+        {
+            return (Affector)affectedMethod.AddAffector(new ReturnValueChangerWithContext<Task<T>>(valueExpression));
+        }
+
 
         // Triggers
 

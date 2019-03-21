@@ -54,6 +54,21 @@ namespace RuhRoh.Tests
         }
 
         [Fact]
+        public void ReturnValueChangerWithContext_Should_Change_The_Return_Value()
+        {
+            var initialValue = 9000;
+
+            _invocation = A.Fake<IInvocation>();
+            _invocation.ReturnValue = initialValue;
+
+            var affector = new ReturnValueChangerWithContext<int>(x => x + 1);
+
+            affector.Affect(_invocation);
+
+            Assert.Equal(9001, (int)_invocation.ReturnValue);
+        }
+
+        [Fact]
         public void Delayer_Should_Run_Before_Method_Invocation()
         {
             var affector = new Delayer(TimeSpan.FromSeconds(10));
@@ -73,6 +88,14 @@ namespace RuhRoh.Tests
         public void ReturnValueChanger_Should_Run_After_Method_Invocation()
         {
             var affector = new ReturnValueChanger<int>(() => 1);
+
+            Assert.False(affector.RunsBeforeMethodExecution);
+        }
+
+        [Fact]
+        public void ReturnValueChangerWithContext_Should_Run_After_Method_Invocation()
+        {
+            var affector = new ReturnValueChangerWithContext<int>(x => x + 1);
 
             Assert.False(affector.RunsBeforeMethodExecution);
         }

@@ -542,5 +542,67 @@ namespace RuhRoh.Tests
             Assert.Equal(1, item3.Id);
             Assert.Equal(fixedItem.Id, item4.Id);
         }
+
+        [Fact]
+        public void Returns_Should_Be_Able_To_Update_The_Actual_Value()
+        {
+            // Arrange
+            var rnd = new Random();
+            Expression<Func<Models.TestItem, Models.TestItem>> itemExpression = item => new Models.TestItem
+            {
+                Id = item.Id + 100,
+                TextField1 = "Chaos was here: " + item.TextField1,
+                TextField2 = rnd.Next().ToString() + " " + item.TextField2
+            };
+
+            var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
+            affectedService.WhenCalling(x => x.GetItemById(With.Any<int>()))
+                .Returns(itemExpression);
+
+            var service = affectedService.Instance;
+
+            // Act
+            var item1 = service.GetItemById(1);
+            var item2 = service.GetItemById(2);
+
+            // Assert
+            Assert.Equal(101, item1.Id);
+            Assert.Equal(102, item2.Id);
+            Assert.StartsWith("Chaos was here: ", item1.TextField1);
+            Assert.NotEqual(item1.TextField2, item2.TextField2);
+        }
+
+        [Fact]
+        public async Task Returns_Should_Be_Able_To_Update_The_Actual_Value_Async()
+        {
+            // Arrange
+            var rnd = new Random();
+            Func<Task<Models.TestItem>, Task<Models.TestItem>> itemFunc = async task =>
+            {
+                var item = await task;
+                return new Models.TestItem
+                {
+                    Id = item.Id + 100,
+                    TextField1 = "Chaos was here: " + item.TextField1,
+                    TextField2 = rnd.Next().ToString() + " " + item.TextField2
+                };
+            };
+
+            var affectedService = ChaosEngine.Affect<ITestServiceContract>(() => new TestService());
+            affectedService.WhenCalling(x => x.GetItemByIdAsync(With.Any<int>()))
+                .ReturnsAsync<Models.TestItem>(x => itemFunc(x));
+
+            var service = affectedService.Instance;
+
+            // Act
+            var item1 = await service.GetItemByIdAsync(1);
+            var item2 = await service.GetItemByIdAsync(2);
+
+            // Assert
+            Assert.Equal(101, item1.Id);
+            Assert.Equal(102, item2.Id);
+            Assert.StartsWith("Chaos was here: ", item1.TextField1);
+            Assert.NotEqual(item1.TextField2, item2.TextField2);
+        }
     }
 }

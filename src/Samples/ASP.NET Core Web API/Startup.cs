@@ -46,14 +46,18 @@ namespace RuhRoh.Samples.WebAPI
                 .Throw<Exception>()
                 .AtRandom();
 
+            Func<Task<TodoItem>, Task<TodoItem>> taskWithChaosFunc = async task =>
+            {
+                var item = await task;
+                item.Completed = !item.Completed;
+                item.Description = string.Concat("CHAOS - ", item.Description, " - CHAOS");
+
+                return item;
+            };
+
             services.AffectScoped<ITodoItemService, TodoItemService>()
                 .WhenCalling(x => x.GetTodoItem(With.Any<Guid>()))
-                .ReturnsAsync(() => new TodoItem
-                {
-                    Id = Guid.NewGuid(),
-                    Completed = false,
-                    Description = "This is not the todo item you're looking for..."
-                })
+                .ReturnsAsync<TodoItem>(x => taskWithChaosFunc(x))
                 .EveryNCalls(2);
 
             services.AffectScoped<ITodoItemService, TodoItemService>()
