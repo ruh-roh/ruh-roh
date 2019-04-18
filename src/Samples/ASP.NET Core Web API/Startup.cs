@@ -53,13 +53,15 @@ namespace RuhRoh.Samples.WebAPI
                 .PlannedAt(new DateTimeOffset(DateTime.Now.AddMinutes(-40)), TimeSpan.FromMinutes(45));
         }
         
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, TodoDbContext context)
         {
             if (env.IsDevelopment())
             {
                 app.UseDatabaseErrorPage();
                 app.UseDeveloperExceptionPage();
             }
+
+            context.Database.Migrate();
 
             app.UseMvc();
         }
