@@ -6,6 +6,7 @@ namespace RuhRoh.Triggers
     {
         private readonly TimesCalledOperation _operation;
         private readonly int _trigger;
+        private bool _stopUpdating = false;
 
         internal TimesCalledTrigger(TimesCalledOperation operation, int trigger)
         {
@@ -25,13 +26,30 @@ namespace RuhRoh.Triggers
             switch (_operation)
             {
                 case TimesCalledOperation.After:
-                    return ActualTimesCalled > _trigger;
+                    if (!_stopUpdating && ActualTimesCalled > _trigger)
+                    {
+                        _stopUpdating = true;
+                    }
+                    return _stopUpdating;
                 case TimesCalledOperation.Until:
-                    return ActualTimesCalled < _trigger;
+                    if (!_stopUpdating && ActualTimesCalled >= _trigger)
+                    {
+                        _stopUpdating = true;
+                    }
+                    return !_stopUpdating;
                 case TimesCalledOperation.At:
+                    if (!_stopUpdating && ActualTimesCalled > _trigger)
+                    {
+                        _stopUpdating = true;
+                    }
                     return ActualTimesCalled == _trigger;
                 case TimesCalledOperation.EveryXCalls:
-                    return ActualTimesCalled % _trigger == 0;
+                    if (ActualTimesCalled % _trigger == 0)
+                    {
+                        ActualTimesCalled = 0;
+                        return true;
+                    }
+                    return false;
             }
 
             return false;
@@ -39,6 +57,11 @@ namespace RuhRoh.Triggers
 
         void IUpdateableTrigger.Update()
         {
+            if (_stopUpdating)
+            {
+                return;
+            }
+
             ActualTimesCalled++;
         }
     }
