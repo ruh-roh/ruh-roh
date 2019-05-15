@@ -22,6 +22,24 @@ namespace RuhRoh.Tests.Triggers
             Assert.True(result);
         }
 
+        [Fact]
+        public void After_Should_Work_When_Going_Beyond_MaxValue()
+        {
+            var timesCalled = int.MaxValue - 1;
+            var t = new TimesCalledTrigger(TimesCalledOperation.After, 3);
+
+            t.ActualTimesCalled = timesCalled;
+            var result = ((ITrigger)t).WillAffect();
+
+            ((IUpdateableTrigger)t).Update(); // int.MaxValue (if Update would still actually increase)
+            result = ((ITrigger)t).WillAffect();
+
+            ((IUpdateableTrigger)t).Update(); // int.MinValue
+            result = ((ITrigger)t).WillAffect();
+
+            Assert.True(result);
+        }
+
         [Theory]
         [InlineData(1)]
         [InlineData(2)]
@@ -76,6 +94,24 @@ namespace RuhRoh.Tests.Triggers
         }
 
         [Fact]
+        public void Until_Should_Work_When_Going_Beyond_MaxValue()
+        {
+            var timesCalled = int.MaxValue - 1;
+            var t = new TimesCalledTrigger(TimesCalledOperation.Until, 3);
+
+            t.ActualTimesCalled = timesCalled;
+            var result = ((ITrigger)t).WillAffect();
+
+            ((IUpdateableTrigger)t).Update(); // int.MaxValue (if Update would still actually increase)
+            result = ((ITrigger)t).WillAffect();
+
+            ((IUpdateableTrigger)t).Update(); // int.MinValue
+            result = ((ITrigger)t).WillAffect();
+
+            Assert.False(result);
+        }
+
+        [Fact]
         public void Until_Should_Not_Affect_When_Not_Called()
         {
             var t = new TimesCalledTrigger(TimesCalledOperation.Until, 3);
@@ -123,6 +159,29 @@ namespace RuhRoh.Tests.Triggers
 
             t.ActualTimesCalled = timesCalled;
             var result = ((ITrigger)t).WillAffect();
+
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void EveryXCalls_Should_Affect_When_Multiple_Of_X_Beyond_MaxValue()
+        {
+            var timesCalled = int.MaxValue - 1;
+            var t = new TimesCalledTrigger(TimesCalledOperation.EveryXCalls, 3);
+
+            t.ActualTimesCalled = timesCalled;
+            var result = ((ITrigger)t).WillAffect();
+
+            Assert.True(result);
+
+            ((IUpdateableTrigger)t).Update();
+            ((ITrigger)t).WillAffect();
+
+            ((IUpdateableTrigger)t).Update();
+            ((ITrigger)t).WillAffect();
+
+            ((IUpdateableTrigger)t).Update();
+            result = ((ITrigger)t).WillAffect();
 
             Assert.True(result);
         }
